@@ -1,0 +1,294 @@
+\documentclass[12pt]{report}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[fleqn]{amsmath}
+\usepackage{amsfonts,amssymb,stmaryrd}
+\usepackage[english]{babel}
+\usepackage{pdfpages}
+
+%=============Affichage=======================
+\usepackage{fullpage}
+\usepackage{mathtools}
+\usepackage{lmodern}
+\usepackage{xcolor}
+\usepackage{enumitem}
+\usepackage{tikz,tkz-tab}
+\title{Cours Mathématiques MP*}
+\author{Waxin Alban}
+
+\definecolor{almond}{rgb}{0.94, 0.87, 0.8}
+\definecolor{champagne}{rgb}{0.97, 0.91, 0.81}
+\definecolor{dgreen}{rgb}{0.0, 0.5, 0.0}
+\definecolor{bc}{rgb}{0.8588, 0.8980, 0.9450}
+
+\setlength{\topmargin}{-1.5cm}
+\setlength{\textheight}{25cm}
+\setlength{\textwidth}{16cm}
+\setlength{\oddsidemargin}{-1.5cm}
+\setlength{\evensidemargin}{50cm}
+
+\newcommand{\rd}[1]{\textcolor{red}{#1}}
+\newcommand{\g}[1]{\textcolor{lime}{#1}}
+\newcommand{\dg}[1]{\textcolor{dgreen}{#1}}
+\newcommand{\blue}[1]{\textcolor{blue}{#1}}
+\newcommand{\cy}[1]{\textcolor{cyan}{#1}}
+\newcommand{\blz}{$\blacklozenge$}
+\newcommand{\ns}{\\\indent\indent\vspace{0.25cm}}
+\setcounter{secnumdepth}{5}% profondeur de la table des matières
+\usepackage{titlesec}
+
+
+\titleformat{\chapter}[frame]
+{\Huge}
+{\filright\rmfamily\bfseries\Huge\enspace\thechapter\enspace}
+{18pt}
+{\rmfamily\huge\bfseries\filcenter}
+% rmfamily=roman, sffamily = sans serif ou ttfamily =type writer
+\usepackage[many]{tcolorbox} % Creation de box collorable pour le texte non intégré
+\newtcolorbox{mybox}{colback=bc,
+colframe=black,arc=0mm,sharp corners= northwest,arc=10pt}
+
+\newtcolorbox{demo}{colback=almond,
+colframe=black,arc=0mm,sharp corners= northeast,arc=10pt}
+
+\renewcommand*{\overrightarrow}[1]{\vbox{\halign{##\cr
+ \tiny\rightarrowfill\cr\noalign{\nointerlineskip\vskip1pt}
+ $#1\mskip2mu$\cr}}}
+
+\newcommand{\rem}[1]
+{
+\subparagraph*{\underline{Remarque:#1}}\mbox{}\\
+}
+
+\newcommand{\props}[1]
+{
+\begin{mybox}
+\textbf{\rd{\underline{\blz Propriété:} #1}}
+\vspace{0.5cm}
+\newline
+}
+
+\newcommand{\prope}
+{
+\end{mybox}
+}
+
+\newcommand{\scal}[2]
+{
+<#1|#2>
+}
+
+\newcommand{\defis}[1]
+{
+\begin{mybox}
+\textbf{\rd{\underline{\blz Définition:} #1}}
+\vspace{0.5cm}
+\newline
+}
+\newcommand{\defie}
+{
+\end{mybox}
+}
+\newcommand{\demos}[1]
+{
+\begin{demo}
+\textbf{\underline{\blz Démonstration:} #1}
+\newline
+}
+\newcommand{\demoe}
+{
+\end{demo}
+}
+\newcommand{\exe}[1]
+{
+\subparagraph*{\underline{Exemple:#1}}\mbox{}\\
+}
+
+\newcommand{\vs}
+{
+\vspace{0.25cm}
+}
+
+\newcommand{\thms}[1]
+{
+\begin{mybox}
+\textbf{\rd{\underline{\blz Théorème:} #1}}
+\vspace{0.5cm}
+\newline
+}
+
+\newcommand{\thme}
+{
+\end{mybox}
+}
+
+\newcommand{\coros}[1]
+{
+\begin{mybox}
+\textbf{\rd{\underline{\blz Corolaire:} #1}}
+\vspace{0.5cm}
+\newline
+}
+
+\newcommand{\coroe}
+{
+\end{mybox}
+}
+
+\newcommand{\lems}[1]
+{
+\begin{mybox}
+\textbf{\rd{\underline{\blz Lemme:} #1}}
+\vspace{0.5cm}
+\newline
+}
+
+\newcommand{\leme}
+{
+\end{mybox}
+}
+%=============================================
+
+%\usepackage[cm]{aeguill}
+
+%=============Mathématiques=================
+
+%--------------Raccourcis:------------------
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\C}{\mathbb{C}}
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\Q}{\mathbb{Q}}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\K}{\mathbb{K}}
+\newcommand{\M}{\mathcal{M}}
+\newcommand{\nint}[1]{#1 \in \N}
+\newcommand{\zint}[1]{#1 \in \N^*}
+\newcommand{\limi}[1]{\underset{#1 \to \infty}{lim}}
+\newcommand{\limn}[2]{\underset{#1 \to #2}{lim}}
+\newcommand{\x}{\times}
+\newcommand{\un}[1]{u_{#1}}
+\newcommand{\uns}{(u_n)_\nint{n}}
+\newcommand{\Sn}[1]{S_{#1}}
+\newcommand{\Sns}{(S_n)_\nint{n}}
+\newcommand{\ol}[1]{\overline{#1}}
+\newcommand{\znz}{\Z/n\Z}
+\renewcommand{\o}{\circ}
+
+\newcommand{\seriegu}{\sum u_n}
+\newcommand{\seriegv}{\sum v_n}
+\newcommand{\harmonique}{\sum \frac{1}{n}}
+\newcommand{\SRieman}{\sum \frac{1}{n^\alpha}}
+\newcommand{\serie}[3]{\sum_{#1}^{#2}{#3}}
+\newcommand{\satps}{série à terme positif}
+\newcommand{\satp}{séries à termes positifs}
+\newcommand{\pl}[1]{\mathbb{#1}[X]}
+\newcommand{\som}[2]{\sum\limits_{#1}^{#2}}
+
+
+\newcommand{\abs}[1]{\left\lvert#1\right\rvert}
+\DeclarePairedDelimiter{\ceil}{\lceil}{\rceil}
+
+%Format de fonctions:
+\newcommand{\fct}[5]
+	{
+	  \begin{array}{ccccc}
+		#1 & : & #2 & \to & #3 \\
+	    && #4 & \mapsto & #5 \\
+	  \end{array}
+	}
+\newcommand{\dfct}[2] {#1 \mapsto #2}
+
+\renewcommand{\abs}[1]{|#1|}
+\newcommand{\nm}[2]{ ||#1||_{#2} }
+%===================TESTS===================
+
+\begin{document}
+
+\chapter{TD3}
+
+\section{Question 1}
+
+$\mathcal{F} = \lbrace (a,0) (b,0) \rbrace$\\
+$\mathcal{P} = \lbrace (J,1),(A,2),(=,2) \rbrace$\\
+$\mathcal{\epsilon} = \lbrace (\bot,0),(\top,0),(\neg,1),(\wedge,2),(\vee,2), (\to,2)  \rbrace$\\
+$\mathcal{Q} = \lbrace \forall, \exists \rbrace$\\
+Syntaxe:
+\begin{itemize}
+\item Termes $t := x|a|b ;  x \in X$
+\item Formules $\Phi := J(t) |A(t,t)|t =t| \bot | \top | \neg \Phi | \Phi \wedge \Phi| \Phi \vee \Phi | \Phi \to \Phi | \forall x \Phi| \exists x \Phi$
+\item $\mathcal{M} = (D ,I_c, I_v)$
+\item $\mathcal{D} = \lbrace $individus $\rbrace $
+\end{itemize}
+\begin{itemize}
+\item Bob n'apprécie que lui\\
+		Réponse:$\forall x  ,(A(b,x) \Leftrightarrow b =x)$\\
+
+\item Alice apprécie tout le monde,à l'exception de ceux qui portent des cravate jaunes\\
+		Réponse:$\forall x  ,(\neg A(a,x) \Leftrightarrow J(x))$\\
+
+\item Tous ceux qui portent des cravates jaunes s'apprécient mutuellement\\
+Réponse:$\forall x ,y , (J(x) \wedge J(y)) \Rightarrow (A(x,y) \wedge A(y,x))$
+\item Au plus trois personnes portes des cravates jaunes\\
+		Réponse:$\exists x ,y ,z  (J(x) \wedge J(y) \wedge J(z)) \wedge (\forall  x_1 (\neg x_1 = x \wedge \neg x_1 = y \wedge \neg x_1 = z)\Rightarrow\neg J(x_1))$\\
+		Réponse V2:   $ \forall x \forall y \forall z \forall t ( \neg (x = y) \wedge \neg ( x = z) \wedge \neg (y = z)) \wedge (J(x) \wedge J(y) \wedge J(z)) \Rightarrow ((t=x) \vee (t=y) \vee t =z))$
+\item Au moins deux personnes portent des cravates jaunes\\
+Réponse: $\exists x,y (J(x) \wedge J(y)) \wedge (\forall z (\neg A(x,z) \wedge \neg A(y,z))$
+\item Il existe une personne qui apprécie quelqu 'un qui n'apprécie pas ceux qui portent des cravates jaunes\\
+Réponse: $ \exists x ( \exists y ( A(x,y) \wedge (\forall w ( J(w) \Rightarrow \neg A(y,w)))))$
+\end{itemize}
+
+\section{Question 2}
+
+\begin{enumerate}
+\item $\forall x (P_1(x) \vee P_2(x) \vee P_3(x) \vee P_4(x) \vee P_5(x))$ : V
+\item $\exists (P_1(x) \wedge P_2(x) \wedge P_3(x) \wedge P_4(x) \wedge P_5(x))$ :F $P_1$ et $P_5$ impossible
+\item $\forall x P_1(x) \vee \forall x P_2(x) \vee \forall x P_3(x) \vee \forall x P_4(x) \vee \forall x P_5(x)$: F car : \begin{enumerate}
+\item toujours impossible
+\item pas vrais pour $x = 4$
+\item pas vrais pour $x = 4$
+\item pas vrais pour $x =1$
+\item toujours impossible
+\end{enumerate} 
+\item $\exists P_1(x) \Rightarrow \exists P_5(x)$: V
+\end{enumerate}
+
+\section{Question 3}
+
+Posons $\mathcal{I}_2$ d'univers $\mathcal{D}$ tel que :
+
+$\forall j \in [0,8] ,\mathcal{I}_2(c_j) = 42$
+
+$\forall i \in [1,5], \mathcal{I}_2(P_i) = \lbrace x \in \mathcal{D}  \rbrace$\\
+
+vérifions les 4 formules
+\begin{enumerate}
+ \item  tous sont vérifiés 
+ \item $x=0$ fonctionne
+ \item vrais car $\forall x \in \mathcal{D} P_1(x) = V$
+ \item vrais car $\forall x \in \mathcal{D} P_5(x) = V$
+\end{enumerate}
+
+\section{Question 4}
+
+Posons $\mathcal{I}_2$ d'univers $\mathcal{D}$ tel que :
+
+$\forall j \in [0,8] ,\mathcal{I}_2(c_j) = 42$
+
+$\forall i \in [2,5], \mathcal{I}_2(P_i) = \emptyset$
+
+$\mathcal{I}_2(P_1) = \lbrace 0 \rbrace$\\
+
+vérifions les 4 formules
+\begin{enumerate}
+ \item  pas vrais pour tout $x$
+ \item $P_2$ toujours faux
+ \item toujours faux ou une seule valeur donc pas vrais por tout $x$
+ \item bien un $x$ qui verifie $P_1$ et aucun qui verifie $P_5$ donc faux
+\end{enumerate}
+
+\section{Question 5}
+
+Impossible car  si b est vrais il exite un $x$ tel que $P_1(x)$ est vrais et $P_5(x)$ donc b) est vraie or ce meme $x$ fais que d) est vrais 
+
+
+\end{document}

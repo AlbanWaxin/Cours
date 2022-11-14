@@ -1,0 +1,357 @@
+\documentclass[12pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{amsmath,amsfonts,amssymb,stmaryrd}
+\usepackage[english]{babel}
+\usepackage{ifthen}
+\usepackage{pdfpages}
+
+%=============Affichage=======================
+\usepackage{fullpage}
+\usepackage{mathtools}
+\usepackage{lmodern}
+\usepackage{xcolor}
+\usepackage{tikz}
+\usepackage{mathtools}
+\usepackage[ruled,vlined]{algorithm2e}
+\setlength{\topmargin}{-1.5cm}
+\setlength{\textheight}{25cm}
+\setlength{\textwidth}{18cm}
+\setlength{\oddsidemargin}{-1.5cm}
+\setlength{\evensidemargin}{50cm}
+\title{Projet Algorithmique: MeanShift}
+\author{Waxin Alban, Le Meur Quentin, Laurin Guillaume, Sansané Hugo, Said Yacine}
+
+\newcommand{\rd}[1]{\textcolor{red}{#1}}
+\newcommand{\g}[1]{\textcolor{lime}{#1}}
+\newcommand{\dg}[1]{\textcolor{green}{#1}}
+\newcommand{\blue}[1]{\textcolor{blue}{#1}}
+\newcommand{\cy}[1]{\textcolor{cyan}{#1}}
+\newcommand{\blz}{$\blacklozenge$}
+\newcommand{\ns}{\\\indent\indent\vspace{0.25cm}}
+\newcommand{\df}{$\equiv$ }
+\usepackage[many]{tcolorbox} % Creation de box collorable pour le texte non intégré
+\newtcolorbox{mybox}{colback=white,
+colframe=red,arc=0mm}
+
+\renewcommand*{\overrightarrow}[1]{\vbox{\halign{##\cr
+ \tiny\rightarrowfill\cr\noalign{\nointerlineskip\vskip1pt}
+ $#1\mskip2mu$\cr}}}
+
+\newcommand*{\Coordp}[4]{%
+ \ensuremath{{#1}\,
+   \left\lvert
+     \begin{matrix}
+       #2\\
+       #3\\
+       #4
+     \end{matrix}
+   \right.% Ne pas oublier le délimiteur invisible.
+ }}
+ \newcommand{\divp}[2]
+	{
+	  \frac{\partial #1}{\partial #2}
+	}
+
+\newcommand{\divt}[2]
+	{
+	  \frac{d #1}{d #2}
+	}
+
+\newcommand{\divpsnd}[2]
+	{
+	  \frac{\partial^2 #1}{\partial #2^2}
+	}
+
+\newcommand{\divts}[2]
+	{
+	  \frac{d^2 #1}{d #2^2}
+	}
+
+\newcommand{\rem}[1]
+{
+\cy{\underline{\blz Remarque: }#1}\vspace{0.5cm}
+}
+
+\newcommand{\props}[1]
+{
+\begin{mybox}
+\textbf{\rd{\underline{\blz Propriétés:} #1}}
+\vspace{0.5cm}
+\newline
+}
+
+\newcommand{\thetap}{\dot{\theta}}
+
+\newcommand{\rot}[1]
+{
+\overrightarrow{rot}(\overrightarrow{#1})
+}
+
+\newcommand{\grad}[1]
+{
+\overrightarrow{grad}(\overrightarrow{#1})
+}
+
+\newcommand{\lapl}[1]
+{
+\Delta(\overrightarrow{#1})
+}
+
+\newcommand{\divs}[1]
+{
+div(\overrightarrow{#1})
+}
+
+\newcommand{\prope}
+{
+\end{mybox}
+}
+
+\newcommand{\defis}[1]
+{
+\begin{mybox}
+\textbf{\rd{\underline{\blz Définition:} #1}}
+\vspace{0.5cm}
+\newline
+}
+\newcommand{\defie}
+{
+\end{mybox}
+}
+\newcommand{\discu}[1]
+{
+\blue{\underline{\blz Discussion:} #1}
+}
+
+\newcommand{\vs}
+{
+\vspace{0.25cm}
+}
+%=============================================
+
+%\usepackage[cm]{aeguill}
+
+%=============Mathématiques=================
+
+%--------------Raccourcis:------------------
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\C}{\mathbb{C}}
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\Q}{\mathbb{Q}}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\K}{\mathbb{K}}
+\newcommand{\M}{\mathcal{M}}
+
+\newcommand{\abs}[1]{\left\lvert#1\right\rvert}
+\DeclarePairedDelimiter{\ceil}{\lceil}{\rceil}
+
+%Format de fonctions:
+\newcommand{\fct}[5]
+	{
+	  \begin{array}{ccccc}
+		#1 & : & #2 & \to & #3 \\
+	    && #4 & \mapsto & #5 \\
+	  \end{array}
+    }
+%===================TESTS===================
+
+\begin{document}
+\maketitle\newpage
+\raggedright
+\section*{Présentation de l'algorithme}
+
+\subsection*{Objectif}
+L'automatisation du traitement d'image, aussi bien pour des applications de suivi vidéo que pour
+des applications d'automatisation de traitements basiques sont des taches difficiles et qui peuvent
+aisément mener à des résultats grossièrement éronés. Cela nécessite pour les algorithmes les plus 
+primitifs un trop grand nombre de données dépendantes de l'utilisateur , car ces algorithmes de traitement 
+dépendent de la fiabilité des données. C'est pour cela que des algorithmes de recherche de cluster ont vu le jour
+.L'algorithme du Mean Shift est un algorithme de traitement d'images couleur
+visant à résoudre la situation des problèmes de "clustering" c'est à dire un problème de regroupement de données.
+Notament utiliser pour la détection des zones d'une image couleur, l'algorithme du MeanShift à été créé en 1975 par Fukunaga et Hostetler
+et sa terminaison à été démontrée en 1995 par Yizong Cheng. Il a pour avantage vis à vis de ses équivalents de K-Means
+de ne pas nécissiter d'entrés utilisateur sur le nombre de cluster mais uniquement une sensibilité
+
+\subsection*{Principe de l'algorithme}
+
+Supposons fourni $n$ points de données dans l'espace $R^3$,
+
+L'algorithme repose sur un principe de moyennes succesives des caractéristiques couleur des pixels. En effet 
+en effectuant des moyennes pondérées par la proximité chromatique de l'ensemble des pixels de l'image on 
+obtient des agrégas de couleurs unies qu'il ne reste qu'à séparer par critère géométrique.
+
+Pour créer ces agrégas de pixels de même couleur, on calcule une matrices des moyennes qui subit 
+le même traitement jusqu'à obtenir une couleur qui ne change pas entre deux itérations. Dans l'espace 3D RGB 
+cela équivaut au regroupement des toutes les couleurs proches en une couleur commune 
+
+\includegraphics[scale=0.155]{/home/waxin/Téléchargements/image-54.png}
+\includegraphics[scale=0.155]{/home/waxin/Téléchargements/image-56.png} 
+
+Pour calculer ces moyennes sur tous les pixels de l'image on utilise une fonction de pondération
+qui s'appel Noyau noté K
+\subsection*{Résultats de l'algorithme}
+\includegraphics[scale=0.55]{/home/waxin/Téléchargements/result.png}
+
+\section*{Algorithme du Mean Shift}
+
+\small
+\begin{algorithm}[H]
+    \SetAlgoLined
+    \KwData{$M$ ensemble de $n$ pixels\\
+    K une fonction
+    j un entier
+    }
+    \KwResult{m:float}
+    initialisation\;
+    m = 0 \;
+    s = 0 \;
+    \For{$i = 0 , i < n+1 , i++$}{
+       m += norm(M[i])K(M[j] - M[i])\;
+       s += K(M[j] - M[i])        
+    }
+    return m/s
+
+    \caption{Moyenne}
+\end{algorithm}
+
+Algorithme Global
+
+\begin{algorithm}[H]
+    \SetAlgoLined
+    \KwData{$D$ ensemble de $n$ pixels\\
+    K une fonction
+    $\eta$: float
+    }
+    \KwResult{M Matrice des agrégas}
+    initialisation\;
+    N = D une matrice Buffer\;
+    M une matrice de $n$ (0,0,0)\;
+    \While{abs(N-M) >$\eta$}{
+        N = M
+        \For{$i = 0 , i < n+1 , i++$}{
+          M[i] = moyenne(N,K,i)      
+        }
+    }
+    \caption{Mean Shift}
+\end{algorithm}
+\normalsize
+
+\section*{Preuve de Terminaison}
+
+\subsection*{Preuve boucle For: Moyenne}
+\subsubsection*{Étude informelle}
+L'algorithme fonctionne comme suit:
+
+\begin{itemize}
+    \item A la fin de l'iteration j de la boucle for, m contient la somme des j premieres valeurs des normes des pixels multiplié par leur pondération\\
+    s contient la somme des j premiers coefficients de pondération 
+\end{itemize}
+
+\subsubsection*{Invariants de boucle}
+\begin{enumerate}
+    \item $m_j$ contient la somme des t premieres valeurs des normes des pixels multiplié par leur pondération\\
+    $m_t = \sum_{i=0}^t norm(M[i])K(M[j]-M[i])$
+    \item  $s_j$ contient la somme des t premiers coefficients de pondération\\
+    $s_t = \sum_{i=0}^t K(M[j]-M[i])$
+\end{enumerate}
+\subsubsection*{Preuve}
+\underline{Initialisation}: Avant la première itération, t=0.\\
+s et m sont initialisé à 0 d'où $m_0 = 0 = \sum_{i=0}^0 norm(M[i])K(M[j]-M[i])$ et $s_0 = 0 = \sum_{i=0}^0 K(M[j]-M[i])$ 
+
+\underline{Conservation}: Au début de l'itération $t+1$ supposons que 
+\begin{enumerate}
+    \item $s_t = \sum_{i=0}^t K(M[j]-M[i])$
+    \item $m_t = \sum_{i=0}^k norm(M[i])K(M[j]-M[i])$
+\end{enumerate}
+Au cours de l'itération, nous effectuons les actions suivantes:
+\begin{enumerate}
+    \item ajouter $K(M[j]-M[t+1])$ à $s$
+    \item ajouter $norm(M[t+1])K(M[j]-M[t+1])$ à $m$ 
+\end{enumerate}
+A la fin de l'itération (avant d'incrémenter la valeur de t) 
+\begin{enumerate}
+    \item $s = \sum_{i=0}^t K(M[j]-M[i]) + K(M[j]-M[t+1]) = \sum_{i=0}^{t+1} K(M[j]-M[i]) $
+    \item $m = \sum_{i=0}^t norm(M[i])K(M[j]-M[i]) + norm(M[t+1])K(M[j]-M[t+1]) = \sum_{i=0}^{t+1} norm(M[i])K(M[j]-M[i]) $
+\end{enumerate} 
+
+\underline{Terminaison}: En sortie de la boucle for on a:
+\begin{enumerate}
+    \item $s = \sum_{i=0}^{n} K(M[j]-M[i])$
+    \item $m = \sum_{i=0}^n norm(M[i])K(M[j]-M[i])$
+\end{enumerate}
+\subsection*{Preuve boucle For: global}
+\subsection*{Preuve de terminaison du While}
+
+\subsubsection*{Préambule Mathématique}
+On muni $\R^3$,de sa norme usuelle et de son produit scalaire <|>\ns
+
+La condition de convergence de l'algorithme est la convergence pour une zone donnée des éléments de E en un seul point 
+
+Ce qui se traduit par un confinement des points de E a une boule de rayon $r$ tendant vers 0.\\
+
+
+\underline{diamètre:} $d = d(\underbrace{max}_{x \in M}d(x,0),\underbrace{min}_{x \in M}d(x,0))$
+
+or les données ne sont pas réparties uniformément dans $\R^3$ ,\\
+Soit $X \in R^3, ||X|| = 1$
+On pose alors soit $d_X =  \underbrace{max}_{x \in M}(<x|X>)-\underbrace{min}_{x \in M}(<x|X>)$\\
+Et $d = sup_{||X||=1}(d_X)$
+
+Définissons les termes apparaissant dans l'algorithme\\
+$\fct{K}{\R^5}{\R}{x}{\begin{cases} f(x), & ||x|| \leq \lambda\\
+0, & ||x|| > \lambda
+\end{cases}}$  appelée Noyau définit l'appartenance d'un point à un espace\\
+Durant l'algorithme on calcule la moyenne:$m(a) = \frac{\sum_{x\in M}K(x-a)x}{\sum_{x\in M}K(x-a)}$\\
+On notera $M_{i+1} = m(M_i) = \lbrace m(x), x \in M_i \rbrace$
+Montrons que $d(M_{i+1})< d(M_i)$\\
+Or $d(M_i) = sup_{||X||=1}(\underbrace{max}_{x \in M_i}(<x|X>)-\underbrace{min}_{x \in M_i}(<x|X>))$\\
+
+\subsubsection*{Démonstration}
+Soit $X \in \R^3$\\
+Notons $\alpha_i = \underbrace{max}_{x \in M_i}(<x|X>) , \beta_i = \underbrace{min}_{x \in M_i}(<x|X>)$\\
+Montrons alors que $\alpha_{M_{i+1}} - \beta_{M_{i+1}} < \alpha_{M_i} -\beta_{M_i}$\\
+\begin{align*}
+\alpha_{M_{i+1}} - \beta_{M_{i+1}} &\leq \alpha_{M_i} - \beta_{M_{i+1}} \text{ (linéarité)}\\
+&= \alpha_{M_i} - \beta_{M_{i+1}} + \beta_{M_i} - \beta_{M_i}\\
+&\leq \alpha_{M_i}- \beta_{M_i} + \beta_{M_i} - \beta_{M_{i+1}}\\
+\end{align*}
+Montrons donc que  $\beta_{M_i} - \beta_{M_{i+1}} < 0 $\\
+or $\forall x \in \R^3$
+\scriptsize
+\begin{align*}
+\beta_{M_i} - <m(x)|X> &= \beta_{M_i} - <\frac{\sum_{x' \in M_i} K(x' - x)x'}{\sum_{x' \in M_i} K(x' - x)}|X>\\
+&= \beta_{M_i} - \frac{\sum_{x' \in M_i} K(x' - x)<x'|X>}{\sum_{x' \in M_i} K(x' - x)}\\
+&= \frac{\sum_{x' \in M_i} K(x' - x)(\beta_{M_i} - <x'|X>)}{\sum_{x' \in M_i} K(x' - x)}\\
+\end{align*}
+\normalsize
+or $\forall x' \in M_i, \beta_{M_i} - <x'|X> \leq 0$\\
+Donc $\frac{\sum_{x' \in M_i} K(x' - x)(\beta_{M_i} - <x'|X>)}{\sum_{x' \in M_i} K(x' - x)} < 0$\\
+Donc $\alpha_{M_{i+1}} - \beta_{M_{i+1}} < \alpha_{M_i} - \beta_{M_i}$\\
+Donc si cela est vrais pour tout X alors: $d(M_{i+1}) < d(M_{i})$\\
+Donc \boxed{\text{La boucle While termine}} 
+\subsection*{Complexité}
+
+Par convergence de la boucle While, le nombre d'itérations est fini\\
+or la limite des flottants impose un seuil de tolérance $\eta$.
+On veut que le rayon de convergence varie au moins d'un minimum par itération. \ns
+
+Soit $(1-\frac{k}{4})^j D(A) < \eta$ par passage au logarithme
+$j < ln(\frac{\eta}{D(A)}/ ln( 1 - \frac{k}{4})$ (ce qui serait indépendant de n car D(A) est lié a l'aspect chromatique)\ns
+
+
+Une étude plus poussée détaillée dans la litérature de la variation minimale de R(A) à chaque itération donne un résultat en réalité dépendant de $n$ tel que $j \leq \frac{7R(A)n}{\kappa \times (8 R(A) - \sqrt{32R(A)^2 - 7 \eta^2}}$
+
+Les coûts sont:
+\begin{itemize}
+\item calcul du noyau: \underline{C}
+\item calcul de la moyenne pour un point : \underline{$n*C$}
+\item nombre de calculs de moyennes par itération: \underline{$n$}
+\item nombre d'itérations : fini , $k = \frac{7R(A)n}{\kappa \times (8 R(A) - \sqrt{32R(A)^2 - 7 \eta^2}}$
+\end{itemize}
+
+Total temporel: $k*c*n^2 = O(\frac{n^3}{\eta})$
+
+    
+
+\end{document}

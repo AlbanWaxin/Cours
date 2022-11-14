@@ -1,0 +1,326 @@
+\documentclass[12pt]{report}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[fleqn]{amsmath}
+\usepackage{amsfonts,amssymb,stmaryrd}
+\usepackage[english]{babel}
+\usepackage{pdfpages}
+
+%=============Affichage=======================
+\usepackage{fullpage}
+\usepackage{mathtools}
+\usepackage{lmodern}
+\usepackage{xcolor}
+\usepackage{enumitem}
+\usepackage{tikz,tkz-tab}
+\usepackage[ruled,vlined]{algorithm2e}
+\title{Exercice Algorithmique et compléxité}
+\author{Waxin Alban}
+
+\definecolor{almond}{rgb}{0.94, 0.87, 0.8}
+\definecolor{champagne}{rgb}{0.97, 0.91, 0.81}
+\definecolor{dgreen}{rgb}{0.0, 0.5, 0.0}
+\definecolor{bc}{rgb}{0.8588, 0.8980, 0.9450}
+
+\setlength{\topmargin}{-1.5cm}
+\setlength{\textheight}{25cm}
+\setlength{\textwidth}{16cm}
+\setlength{\oddsidemargin}{-1.5cm}
+\setlength{\evensidemargin}{50cm}
+
+\newcommand{\rd}[1]{\textcolor{red}{#1}}
+\newcommand{\g}[1]{\textcolor{lime}{#1}}
+\newcommand{\dg}[1]{\textcolor{dgreen}{#1}}
+\newcommand{\blue}[1]{\textcolor{blue}{#1}}
+\newcommand{\cy}[1]{\textcolor{cyan}{#1}}
+\newcommand{\blz}{$\blacklozenge$}
+\newcommand{\ns}{\\\indent\indent\vspace{0.25cm}}
+\setcounter{secnumdepth}{5}% profondeur de la table des matières
+\usepackage{titlesec}
+
+
+\titleformat{\chapter}[frame]
+{\Huge}
+{\filright\rmfamily\bfseries\Huge\enspace\thechapter\enspace}
+{18pt}
+{\rmfamily\huge\bfseries\filcenter}
+% rmfamily=roman, sffamily = sans serif ou ttfamily =type writer
+\usepackage[many]{tcolorbox} % Creation de box collorable pour le texte non intégré
+\newtcolorbox{mybox}{colback=bc,
+colframe=black,arc=0mm,sharp corners= northwest,arc=10pt}
+
+\newtcolorbox{demo}{colback=almond,
+colframe=black,arc=0mm,sharp corners= northeast,arc=10pt}
+
+\renewcommand*{\overrightarrow}[1]{\vbox{\halign{##\cr
+ \tiny\rightarrowfill\cr\noalign{\nointerlineskip\vskip1pt}
+ $#1\mskip2mu$\cr}}}
+
+\newcommand{\rem}[1]
+{
+\subparagraph*{\underline{Remarque:#1}}\mbox{}\\
+}
+
+\newcommand{\props}[1]
+{
+\begin{mybox}
+\textbf{\rd{\underline{\blz Propriété:} #1}}
+\vspace{0.5cm}
+\newline
+}
+
+\newcommand{\prope}
+{
+\end{mybox}
+}
+
+\newcommand{\scal}[2]
+{
+<#1|#2>
+}
+
+\newcommand{\defis}[1]
+{
+\begin{mybox}
+\textbf{\rd{\underline{\blz Définition:} #1}}
+\vspace{0.5cm}
+\newline
+}
+\newcommand{\defie}
+{
+\end{mybox}
+}
+\newcommand{\demos}[1]
+{
+\begin{demo}
+\textbf{\underline{\blz Démonstration:} #1}
+\newline
+}
+\newcommand{\demoe}
+{
+\end{demo}
+}
+\newcommand{\exe}[1]
+{
+\subparagraph*{\underline{Exemple:#1}}\mbox{}\\
+}
+
+\newcommand{\vs}
+{
+\vspace{0.25cm}
+}
+
+\newcommand{\thms}[1]
+{
+\begin{mybox}
+\textbf{\rd{\underline{\blz Théorème:} #1}}
+\vspace{0.5cm}
+\newline
+}
+
+\newcommand{\thme}
+{
+\end{mybox}
+}
+
+\newcommand{\coros}[1]
+{
+\begin{mybox}
+\textbf{\rd{\underline{\blz Corolaire:} #1}}
+\vspace{0.5cm}
+\newline
+}
+
+\newcommand{\coroe}
+{
+\end{mybox}
+}
+
+\newcommand{\lems}[1]
+{
+\begin{mybox}
+\textbf{\rd{\underline{\blz Lemme:} #1}}
+\vspace{0.5cm}
+\newline
+}
+
+\newcommand{\leme}
+{
+\end{mybox}
+}
+%=============================================
+
+%\usepackage[cm]{aeguill}
+
+%=============Mathématiques=================
+
+%--------------Raccourcis:------------------
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\C}{\mathbb{C}}
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\Q}{\mathbb{Q}}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\K}{\mathbb{K}}
+\newcommand{\M}{\mathcal{M}}
+\newcommand{\nint}[1]{#1 \in \N}
+\newcommand{\zint}[1]{#1 \in \N^*}
+\newcommand{\limi}[1]{\underset{#1 \to \infty}{lim}}
+\newcommand{\limn}[2]{\underset{#1 \to #2}{lim}}
+\newcommand{\x}{\times}
+\newcommand{\un}[1]{u_{#1}}
+\newcommand{\uns}{(u_n)_\nint{n}}
+\newcommand{\Sn}[1]{S_{#1}}
+\newcommand{\Sns}{(S_n)_\nint{n}}
+\newcommand{\ol}[1]{\overline{#1}}
+\newcommand{\znz}{\Z/n\Z}
+\renewcommand{\o}{\circ}
+
+\newcommand{\seriegu}{\sum u_n}
+\newcommand{\seriegv}{\sum v_n}
+\newcommand{\harmonique}{\sum \frac{1}{n}}
+\newcommand{\SRieman}{\sum \frac{1}{n^\alpha}}
+\newcommand{\serie}[3]{\sum_{#1}^{#2}{#3}}
+\newcommand{\satps}{série à terme positif}
+\newcommand{\satp}{séries à termes positifs}
+\newcommand{\pl}[1]{\mathbb{#1}[X]}
+\newcommand{\som}[2]{\sum\limits_{#1}^{#2}}
+
+
+\newcommand{\abs}[1]{\left\lvert#1\right\rvert}
+\DeclarePairedDelimiter{\ceil}{\lceil}{\rceil}
+
+%Format de fonctions:
+\newcommand{\fct}[5]
+	{
+	  \begin{array}{ccccc}
+		#1 & : & #2 & \to & #3 \\
+	    && #4 & \mapsto & #5 \\
+	  \end{array}
+	}
+\newcommand{\dfct}[2] {#1 \mapsto #2}
+
+\renewcommand{\abs}[1]{|#1|}
+\newcommand{\nm}[2]{ ||#1||_{#2} }
+%===================TESTS===================
+
+\begin{document}
+\maketitle
+
+\chapter*{Exercice:}
+
+Soit $a > 0$\\
+Soient $k,k' \in \N²$\\
+
+\begin{enumerate}
+\item Pourquoi \begin{align*}
+a n^k &= \Theta(n^k)\\
+&= O(n^k)\\
+&= \Omega(n^k)
+\end{align*}
+\item Pourquoi \begin{align*}
+an^k &=  O(n^{k'}) \text{avec} k' \geq k\\
+&= \Omega(n^{k'}) \text{avec} k' \leq k
+\end{align*}
+\end{enumerate}
+Réponse
+\begin{enumerate}
+\item \begin{itemize}
+\item Par définition de $\Theta$, $\exists C,D > 0, \exists n_0, \forall n > n_0 0 \leq Cg(n) \leq f(n) \leq Dg(n)$\\
+En posant C = a et D = a on a bien $\frac{a n^k}{n^k}  = a$ et $C \leq a \leq D$
+\item Par définition $f= \Theta g \Leftrightarrow f = O(g) \wedge f = \Omega(g)$
+\end{itemize} 
+\item \begin{itemize}
+\item Par définition de O, $\exists C > 0, \exists n_0, \forall n > n_0 0 \leq f(n) \leq Cg(n)$\\
+Or $\frac{an^k}{n^{k'}} = an^{k-k'}$ avec $ k-k' < 0$\\
+D'ou $\frac{an^k}{n^{k'}} \to_{\infty} 0$ \\
+donc $an^k =  O(n^{k'}) \text{avec} k' \geq k$ 
+\item  De même $\frac{an^k}{n^{k'}} = an^{k-k'}$ avec $ k-k' > 0$\\
+La fonction est donc strictement croissante vers l'infini elle est donc plus grande qu un seuil qui est le cas $n=1$ et $C=a$ donc Dans la définition de $\Omega$ avec C = a on a bien $ an^k= \Omega(n^{k'}) \text{avec} k' \leq k$
+\end{itemize}
+\end{enumerate}
+
+\chapter{TD}
+
+\section{}
+\section{Compléxité}
+
+\subsection*{Exercice 46}
+
+\begin{center}
+    \scalebox{0.75}{
+    
+    \begin{minipage}{\linewidth}
+\begin{algorithm}[H]
+\SetAlgoLined
+	\KwData{Deux Matrices A,B de taille n}
+	\KwResult{Une matrice C du produit}
+	\BlankLine
+	 int $i,j,k$ \;
+	\For{$i = 1, i \leq n,i++$}
+	{
+	\For{$j= 1, j \leq n, j++$}
+	 	{
+	 	  int $s = 0$ \;
+	 	  \For{$k =1, k \leq n, k++$}
+	 	  {
+	 	    $s += A_{i,k} \times B_{k,j}$
+	 	  }
+	 	  $C_{i,j} \gets s$
+	 	}
+	}
+		
+\caption{Produit Matriciel}
+\end{algorithm}
+\end{minipage}%
+    }
+\end{center}
+
+\paragraph*{Compléxité:}
+La complexite de l'algorithme est $O(n^3)$:\\
+cout boucle for en $i$, $c_i = n * c_j$\\
+cout boucle for en $i$, $c_j = n * c_k$\\
+cout boucle for en $k$, $c_k = a*n$\\
+Cout total: $n^3$
+
+\paragraph*{Correction:}
+
+\subparagraph*{Etude de la boucle For en k}
+
+Fonction: la boucle For calcul bien la valeur de la case $C_{i,j}$
+
+Notation:
+
+\begin{itemize}
+\item $s_0$  est le compteur au depart
+\item $s_k$  est le compteur au début de k tours de boucle
+\item $s$ est le compteur au moment présent 
+\item $C_k$ est la matrice du produit
+\end{itemize}
+
+La boucle for en k  effectue les opérations suivantes:
+
+\begin{itemize}
+\item En entrée de la boucle en $k$, on a : $s = s_{k-1}$
+\item A la fin de chaque itération , on a : $s = s_{k-1} + A_{i,k}B_{k,j}$
+\item En sortie de la boucle en k :$ s = \sum_1^n A_{i,k}B_{k,j}$
+\end{itemize}
+
+\subparagraph*{invariants de boucle}
+
+\begin{enumerate}
+ \item $s_x = \sum_1^x  A_{i,k}B_{k,j}$
+ \item $ A = A_k, B = B_k$
+ \item $ C = C_k$
+\end{enumerate}
+
+\subparagraph*{Preuve:}
+
+\begin{itemize}
+\item Initialisation:\\
+\begin{enumerate}
+\item Avant la premiere itération s = 0
+\end{enumerate}
+\end{itemize}
+
+
+\end{document}

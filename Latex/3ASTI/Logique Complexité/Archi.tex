@@ -1,0 +1,394 @@
+\documentclass[12pt]{report}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[fleqn]{amsmath}
+\usepackage{amsfonts,amssymb,stmaryrd}
+\usepackage[english]{babel}
+\usepackage{pdfpages}
+
+%=============Affichage=======================
+\usepackage{fullpage}
+\usepackage{mathtools}
+\usepackage{lmodern}
+\usepackage{xcolor}
+\usepackage{enumitem}
+\usepackage{tikz,tkz-tab}
+\title{Cours Mathématiques MP*}
+\author{Waxin Alban}
+
+\definecolor{almond}{rgb}{0.94, 0.87, 0.8}
+\definecolor{champagne}{rgb}{0.97, 0.91, 0.81}
+\definecolor{dgreen}{rgb}{0.0, 0.5, 0.0}
+\definecolor{bc}{rgb}{0.8588, 0.8980, 0.9450}
+
+\setlength{\topmargin}{-1.5cm}
+\setlength{\textheight}{25cm}
+\setlength{\textwidth}{16cm}
+\setlength{\oddsidemargin}{-1.5cm}
+\setlength{\evensidemargin}{50cm}
+
+\newcommand{\rd}[1]{\textcolor{red}{#1}}
+\newcommand{\g}[1]{\textcolor{lime}{#1}}
+\newcommand{\dg}[1]{\textcolor{dgreen}{#1}}
+\newcommand{\blue}[1]{\textcolor{blue}{#1}}
+\newcommand{\cy}[1]{\textcolor{cyan}{#1}}
+\newcommand{\blz}{$\blacklozenge$}
+\newcommand{\ns}{\\\indent\indent\vspace{0.25cm}}
+\setcounter{secnumdepth}{5}% profondeur de la table des matières
+\usepackage{titlesec}
+
+
+\titleformat{\chapter}[frame]
+{\Huge}
+{\filright\rmfamily\bfseries\Huge\enspace\thechapter\enspace}
+{18pt}
+{\rmfamily\huge\bfseries\filcenter}
+% rmfamily=roman, sffamily = sans serif ou ttfamily =type writer
+\usepackage[many]{tcolorbox} % Creation de box collorable pour le texte non intégré
+\newtcolorbox{mybox}{colback=bc,
+colframe=black,arc=0mm,sharp corners= northwest,arc=10pt}
+
+\newtcolorbox{demo}{colback=almond,
+colframe=black,arc=0mm,sharp corners= northeast,arc=10pt}
+
+\renewcommand*{\overrightarrow}[1]{\vbox{\halign{##\cr
+ \tiny\rightarrowfill\cr\noalign{\nointerlineskip\vskip1pt}
+ $#1\mskip2mu$\cr}}}
+
+\newcommand{\rem}[1]
+{
+\subparagraph*{\underline{Remarque:#1}}\mbox{}\\
+}
+
+\newcommand{\props}[1]
+{
+\begin{mybox}
+\textbf{\rd{\underline{\blz Propriété:} #1}}
+\vspace{0.5cm}
+\newline
+}
+
+\newcommand{\prope}
+{
+\end{mybox}
+}
+
+\newcommand{\scal}[2]
+{
+<#1|#2>
+}
+
+\newcommand{\defis}[1]
+{
+\begin{mybox}
+\textbf{\rd{\underline{\blz Définition:} #1}}
+\vspace{0.5cm}
+\newline
+}
+\newcommand{\defie}
+{
+\end{mybox}
+}
+\newcommand{\demos}[1]
+{
+\begin{demo}
+\textbf{\underline{\blz Démonstration:} #1}
+\newline
+}
+\newcommand{\demoe}
+{
+\end{demo}
+}
+\newcommand{\exe}[1]
+{
+\subparagraph*{\underline{Exemple:#1}}\mbox{}\\
+}
+
+\newcommand{\vs}
+{
+\vspace{0.25cm}
+}
+
+\newcommand{\thms}[1]
+{
+\begin{mybox}
+\textbf{\rd{\underline{\blz Théorème:} #1}}
+\vspace{0.5cm}
+\newline
+}
+
+\newcommand{\thme}
+{
+\end{mybox}
+}
+
+\newcommand{\coros}[1]
+{
+\begin{mybox}
+\textbf{\rd{\underline{\blz Corolaire:} #1}}
+\vspace{0.5cm}
+\newline
+}
+
+\newcommand{\coroe}
+{
+\end{mybox}
+}
+
+\newcommand{\lems}[1]
+{
+\begin{mybox}
+\textbf{\rd{\underline{\blz Lemme:} #1}}
+\vspace{0.5cm}
+\newline
+}
+
+\newcommand{\leme}
+{
+\end{mybox}
+}
+%=============================================
+
+%\usepackage[cm]{aeguill}
+
+%=============Mathématiques=================
+
+%--------------Raccourcis:------------------
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\C}{\mathbb{C}}
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\Q}{\mathbb{Q}}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\K}{\mathbb{K}}
+\newcommand{\M}{\mathcal{M}}
+\newcommand{\nint}[1]{#1 \in \N}
+\newcommand{\zint}[1]{#1 \in \N^*}
+\newcommand{\limi}[1]{\underset{#1 \to \infty}{lim}}
+\newcommand{\limn}[2]{\underset{#1 \to #2}{lim}}
+\newcommand{\x}{\times}
+\newcommand{\un}[1]{u_{#1}}
+\newcommand{\uns}{(u_n)_\nint{n}}
+\newcommand{\Sn}[1]{S_{#1}}
+\newcommand{\Sns}{(S_n)_\nint{n}}
+\newcommand{\ol}[1]{\overline{#1}}
+\newcommand{\znz}{\Z/n\Z}
+\renewcommand{\o}{\circ}
+
+\newcommand{\seriegu}{\sum u_n}
+\newcommand{\seriegv}{\sum v_n}
+\newcommand{\harmonique}{\sum \frac{1}{n}}
+\newcommand{\SRieman}{\sum \frac{1}{n^\alpha}}
+\newcommand{\serie}[3]{\sum_{#1}^{#2}{#3}}
+\newcommand{\satps}{série à terme positif}
+\newcommand{\satp}{séries à termes positifs}
+\newcommand{\pl}[1]{\mathbb{#1}[X]}
+\newcommand{\som}[2]{\sum\limits_{#1}^{#2}}
+
+
+\newcommand{\abs}[1]{\left\lvert#1\right\rvert}
+\DeclarePairedDelimiter{\ceil}{\lceil}{\rceil}
+
+%Format de fonctions:
+\newcommand{\fct}[5]
+	{
+	  \begin{array}{ccccc}
+		#1 & : & #2 & \to & #3 \\
+	    && #4 & \mapsto & #5 \\
+	  \end{array}
+	}
+\newcommand{\dfct}[2] {#1 \mapsto #2}
+
+\renewcommand{\abs}[1]{|#1|}
+\newcommand{\nm}[2]{ ||#1||_{#2} }
+%===================TESTS===================
+
+\begin{document}
+
+\chapter{TD1}
+
+\section{Exercice 1}
+
+\paragraph*{Question 1)}
+
+\paragraph*{Question Bonus:}
+On décide le nombre de broche dans le bus d'adresse  par deux manières \\
+Premièrement en comptant le nombre de broche de controle soit ici 10 (8 bits de données et 2 bits de controle A et B)\\
+Ou en comptant par rapport a la taille des mémoires ici $256 * 4 = 1024= 2^10$ on a donc besoin de 10 bits de controle
+\section{Exercice 2}
+
+\paragraph*{Question 1)} 
+ Le circuit considéré utilise 8 circuits de RAM de $256 \times 4$ bits et un couple utilise deux de ces circuits en parallèle ce qui ne change pas la capacite mais double la longueur des mots soit $256\times 8$ bits
+ 
+ \paragraph*{Questions 2)}
+ 
+Les équations de validation des couples dépend des tables de vérité du multiplexeurs, les equations suivantes dépendent de la table de vérité suivantes
+
+\begin{tabular}{|c|c|c|c|}
+\hline
+A&B&C&S\\
+\hline
+0&0&0&0\\
+0&0&1&1\\
+0&1&0&2\\
+0&1&1&3\\
+1&0&0&4\\
+1&0&1&5\\
+1&1&0&6\\
+1&1&1&7\\
+\hline
+\end{tabular}
+
+\begin{itemize}
+\item 1/2: $0 =  (A = 0) \wedge (B = 0) \wedge (C=0) $
+$= \neg A_8 \wedge \neg A_9 \wedge \neg (\bigwedge_{i \in [10,15]} \neg A_i)$ 
+\item 3/4: $1 =  (A = 0) \wedge (B = 0) \wedge (C=1)$
+$= \neg A_8 \wedge \neg A_9 \wedge  (\bigwedge_{i \in [10,15]} \neg A_i)$ 
+\item 5/6: $2 =  (A = 0) \wedge (B = 1) \wedge (C=0)$
+$= \neg A_8 \wedge  A_9 \wedge \neg (\bigwedge_{i \in [10,15]} \neg A_i)$ 
+\item 7/8: $0 =  (A = 0) \wedge (B = 1) \wedge (C=1)$
+$= \neg A_8 \wedge  A_9 \wedge  (\bigwedge_{i \in [10,15]} \neg A_i)$ 
+\end{itemize} 
+
+\paragraph*{Question 3)}
+Par résultat de la question 1) et par mise en série des blocs mémoires (controlable par des broches différentes) alors la taille finale de l'ensemble est $(4 \times 256) \times 8$ bits  soit $1024 \times 8$ bits
+
+\chapter{TD2}
+
+\section{Exercice 1}
+
+Contexte: Programme de 48 instructions à répéter 2 fois.\\
+
+Les adresses mémoire des instructions sont $\boxed{1 \to 8}\boxed{145 \to 160}\boxed{9 \to 16}\boxed{145 \to 160}$
+
+\paragraph*{Question 1)}
+On considère un cache de 3 blocs de 8 instructions:
+On regarde le cache par tour de Remplissage
+\begin{itemize}
+\item Tour 1:
+\item $\underbrace{\boxed{\phantom{555} 1 \to 8 \phantom{555}}}_{1M +7C}\boxed{\phantom{55555555555}}\boxed{\phantom{55555555555}}$
+\item $\boxed{\phantom{555} 1 \to 8 \phantom{555}}\underbrace{\boxed{\phantom{5} 145  \to 152 \phantom{5}}}_{1M +7C} \underbrace{\boxed{\phantom{5} 153  \to 160 \phantom{5}}}_{1M +7C}$
+\item $\underbrace{\boxed{\phantom{555} 9 \to 16 \phantom{555}}}_{1M +7C}\boxed{\phantom{5} 145  \to 152 \phantom{5}} \boxed{\phantom{5} 153  \to 160 \phantom{5}}$
+\item $\boxed{\phantom{555} 9 \to 16 \phantom{555}}\underbrace{\boxed{\phantom{5} 145  \to 152 \phantom{5}}}_{8C} \underbrace{\boxed{\phantom{5} 153  \to 160 \phantom{5}}}_{8C}$
+\item Tour 2:
+\item $\underbrace{\boxed{\phantom{555} 1 \to 8 \phantom{555}}}_{1M +7C}\boxed{\phantom{5} 145  \to 152 \phantom{5}} \boxed{\phantom{5} 153  \to 160 \phantom{5}}$
+\item $\boxed{\phantom{555} 1 \to 8 \phantom{555}}\underbrace{\boxed{\phantom{5} 145  \to 152 \phantom{5}}}_{8C} \underbrace{\boxed{\phantom{5} 153  \to 160 \phantom{5}}}_{8C}$
+\item $\underbrace{\boxed{\phantom{555} 9 \to 16 \phantom{555}}}_{1M +7C}\boxed{\phantom{5} 145  \to 152 \phantom{5}} \boxed{\phantom{5} 153  \to 160 \phantom{5}}$
+\item $\boxed{\phantom{555} 9 \to 16 \phantom{555}}\underbrace{\boxed{\phantom{5} 145  \to 152 \phantom{5}}}_{8C} \underbrace{\boxed{\phantom{5} 153  \to 160 \phantom{5}}}_{8C}$
+\end{itemize}
+
+Calcul du total: $(1M + 7C) \times 4 + (8C \times 2) + 1M + 7C + (8C \times 2) + 1M + 7C + (8C \times 2) $ \\
+$= 6M +  90C$
+
+\paragraph*{Question 2)}
+On considère un cache de 2 blocs de 12 instructions:
+On regarde le cache par tour de Remplissage
+\begin{itemize}
+\item Tour 1:
+\item $\underbrace{\boxed{\phantom{555} 1 \to 12 \phantom{555}}}_{1M +7C}\boxed{\phantom{55555555555}}$  7C car même si on regarde le bloc $1 \to 12$ seul $1 \to 8$ sont regardés en cache
+\item $\boxed{\phantom{555} 1 \to 12 \phantom{555}}\underbrace{\boxed{\phantom{5} 145  \to 156 \phantom{5}}}_{1M +11C}$
+\item $\underbrace{\boxed{\phantom{555} 157 \to 168 \phantom{555}}}_{1M +3C}\boxed{\phantom{5} 145  \to 156 \phantom{5}}$ 3C car même si on regarde le bloc $157 \to 168$ seul $157 \to 160$ sont regardés en cache
+\item $\boxed{\phantom{555} 157 \to 168 \phantom{555}}\underbrace{\boxed{\phantom{5} 1  \to 12 \phantom{5}}}_{1M +3C}$
+\item $\underbrace{\boxed{\phantom{5} 13  \to 24 \phantom{5}}}_{1M +3C}\boxed{\phantom{5} 1  \to 12 \phantom{5}}$
+\item $\underbrace{\boxed{\phantom{555} 145 \to 156 \phantom{555}}}_{1M +11C}\underbrace{\boxed{\phantom{5} 157  \to 168 \phantom{5}}}_{1M + 3C}$
+\item Tour 2: Le tour 2 consomme exactement comme le tour 1 car au debut du tour 2 aucun des element du cache va etre réutilisé avant d'être écrit par dessus
+\end{itemize}
+
+Calcul du total: $2 \times ((1M + 7C) + (1M +11C) + ((1M +3C) \times 3) + (1M + 11C) + (1M +3C)$ \\
+$=2 \times  (7M +  41C) = 14M + 82C$
+
+\paragraph*{Question 1)}
+On considère un cache de 1 blocs de 24 instructions:
+On regarde le cache par tour de Remplissage
+\begin{itemize}
+\item Tour 1:
+\item $\underbrace{\boxed{\phantom{555} 1 \to 24 \phantom{555}}}_{1M +7C}$ 7C car même si on regarde le bloc $1 \to 24$ seul $1 \to 8$ sont regardés en cache
+\item $\underbrace{\boxed{\phantom{555} 145 \to 168 \phantom{555}}}_{1M +15C}$
+\item $\underbrace{\boxed{\phantom{555} 1 \to 24 \phantom{555}}}_{1M +7C}$ 7C car même si on regarde le bloc $1 \to 24$ seul $9 \to 16$ sont regardés en cache
+\item $\underbrace{\boxed{\phantom{555} 145 \to 168 \phantom{555}}}_{1M +15C}$
+\item Tour 2: Le tour 2 consomme exactement comme le tour 1 car au debut du tour 2 aucun des element du cache va etre réutilisé avant d'être écrit par dessus
+\end{itemize}
+
+Calcul du total: $2 \times (1M +7C) + (1M + 15C) + (1M + 7C) + (1M+15C)$ \\
+$=2 \times  (4M + 44C) = 8M + 88C$ \\
+
+\paragraph*{Question Bonus: Comparaison}
+Entre le format du cache de la question 1) et le format de cache de la question 3) la question qui présente le format le plus efficace est le format 3 blocs de 8 instructions  car :\\
+$6 M + 90C  \sim 6M$ ( car $M \gg C$) et $8M + 88C \sim 8M$
+Or $6 < 8 $
+Donc le plus efficace est la question 1) 
+\section{Exercice 2}
+
+Rappel de la formule de l'exercice:\\
+ $t_i = t_{acces-succes} \times taux_succes + (temps_{acces_echec} + t_{i+1}) \times taux_{echec}$
+ \ns 
+ 
+ Définition de la règle du $t_{i+1}$: Lors du calcul du temps pour un niveau de mémoire  le $t_{i+1}$ représente le temps du niveau de mémoire suivant dans la liste des distances vers la memoire principale.\\
+ Exemples:
+ \begin{itemize}
+ 	\item question 1): pas de mémoire au delà de la mémoire principale
+ 	\item question 2): pour L1 $t_{i+1}$ est $t$ de  la mémoire principale
+ 	\item question 3): pour L1 $t_{i+1}$ est  $t$ de L2\\
+ 									  pour L2 $t_{i+1}$ est $t$ de la mémoire principale
+ 	\item question 4) pour L1 $t_{i+1}$  est $t$ de L2\\
+ 									  pour L2 $t_{i+1}$ est $t$ de L3\\
+ 									  pour L3 $t_{i+1}$ est $t$ de la mémoire principale 
+ \end{itemize}
+ 
+ \paragraph*{Question 1)}
+ En appliquant la formule avec un taux de succès de 1 pour la mémoire principale : $ t_M = 40$
+ 
+ \paragraph*{Question 2)}
+ On applique d'abord la formule pour la mémoire principale\\
+ $t_M = 40$\\
+ Ensuite pour L1, $t_1 =  3 *0.8 + (1 + 40)*0.2 = \boxed{10.6}$\\
+
+ \paragraph*{Question 3)}
+ On applique d'abord la formule pour la mémoire principale\\
+ $t_M = 40$\\
+ Ensuite pour L2, $t_2 =  5 *0.9 + (2 + 40)*0.1 = \boxed{8.7}$\\
+ Enfin pour L1, $t_1 =  3 *0.8 + (1 + 8.7)*0.2 = \boxed{4.34}$\\
+ 
+ \paragraph*{Question 4)}
+ On applique d'abord la formule pour la mémoire principale\\
+ $t_M = 40$\\
+ Ensuite pour L3, $t_3 =  12 *0.95 + (4 + 40)*0.05 = \boxed{13.6}$\\
+ Ensuite pour L2, $t_2 =  5 *0.9 + (2 + 13.6)*0.1 = \boxed{6.06}$\\
+ Enfin pour L1, $t_1 =  3 *0.8 + (1 + 6.06)*0.2 = \boxed{3.812}$\\
+ 
+\section{Exercice 3}
+
+\paragraph*{Question 1)}
+
+Les unité de consommation en $\mu c$ (micro cycles), sachant que $1 \mu c = 1 ns$ ($ns = 10^{-9} secondes$) 
+Or entre chaque solicitation, une solicitation étant une nouvelle tache donné par le programme, il y a un délai de $15 ns$\\
+
+La première étape hors boucle consome alors $d = 10$ (MOV) $ + 2$(MOV)  = \underline{$12 ns$}  (Pas de délai entre les opérations car les opérations de mouvements sont des opérations élémentaires)\\
+\ns
+De plus une tour de boucle consomme  $b=17$ (Décrémentation) $ +15$ (Délai) $+16$ (Boucle) $=48 ns$ \\
+\ns
+Or Il y a 0100H tours de boucle soit 256 tours, D'ou $t_b = b *256 =8 448 ns$ \\
+\ns
+La dernière étape hors boucle consome alors $f= 4$ (MOV) $+52$ (INT)$=56 \mu  c$\\
+
+Donc au total un temps de calcul de : $\boxed{12356 ns}$
+\vspace{1.5cm}
+
+Pour obtenir la valeur en terme de cycle on ne considère plus les temps d'appel donc $b_2 = 33\mu c$
+
+Le total est donc  de $\boxed{8516 \mu c}$ 
+
+\paragraph*{Question 2)}
+
+On suppose maintenant que le processeur dispose d'une mémoire cache 
+
+Comme la mémoire cache stock les actions de la boucle il n'y a plus d'appel mémoire à chaque itération mais on fais 15 appels à la mémoire cache
+donc  on reprend la réponse en $\mu c$ et on lui ajoute $15 ns$\\
+\ns
+Soit un total de $\boxed{8531 ns}$ \\
+\ns 
+
+une autre réponse possible est lorsque l'on considère que les couts de processeur ne sont pas précomptées dans le calcul on rajoute alors 255 ms 
+donc un total de$\boxed{8786 ns}$
+
+
+\end{document}

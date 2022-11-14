@@ -1,0 +1,525 @@
+\documentclass[12pt]{report}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{amsmath,amsfonts,amssymb,stmaryrd}
+\usepackage[english]{babel}
+\usepackage{ifthen}
+\usepackage{pdfpages}
+
+%=============Affichage=======================
+\usepackage{fullpage}
+\usepackage{mathtools}
+\usepackage{lmodern}
+\usepackage{xcolor}
+\usepackage{enumitem}
+
+\definecolor{almond}{rgb}{0.94, 0.87, 0.8}
+\definecolor{dgreen}{rgb}{0.0, 0.5, 0.0}
+\setlength{\topmargin}{-1.5cm}
+\setlength{\textheight}{25cm}
+\setlength{\textwidth}{16cm}
+\setlength{\oddsidemargin}{-1.5cm}
+\setlength{\evensidemargin}{50cm}
+
+\newcommand{\rd}[1]{\textcolor{red}{#1}}
+\newcommand{\g}[1]{\textcolor{lime}{#1}}
+\newcommand{\dg}[1]{\textcolor{dgreen}{#1}}
+\newcommand{\blue}[1]{\textcolor{blue}{#1}}
+\newcommand{\cy}[1]{\textcolor{cyan}{#1}}
+\newcommand{\blz}{$\blacklozenge$}
+\newcommand{\ns}{\\\indent\indent\vspace{0.25cm}}
+\newcommand{\df}{$\equiv$ }
+\setcounter{secnumdepth}{5}% profondeur de la table des matières
+\usepackage{titlesec}
+
+
+\titleformat{\chapter}[frame]
+{\Huge}
+{\filright\rmfamily\bfseries\Huge\enspace\thechapter\enspace}
+{18pt}
+{\rmfamily\huge\bfseries\filcenter}
+% rmfamily=roman, sffamily = sans serif ou ttfamily =type writer
+\usepackage[many]{tcolorbox} % Creation de box collorable pour le texte non intégré
+\newtcolorbox{mybox}{colback=white,
+colframe=red,arc=0mm}
+
+\newtcolorbox{demo}{colback=almond,
+colframe=black,arc=0mm}
+
+\renewcommand*{\overrightarrow}[1]{\vbox{\halign{##\cr
+ \tiny\rightarrowfill\cr\noalign{\nointerlineskip\vskip1pt}
+ $#1\mskip2mu$\cr}}}
+
+\newcommand*{\Coordp}[4]{%
+ \ensuremath{{#1}\,
+   \left\lvert
+     \begin{matrix}
+       #2\\
+       #3\\
+       #4
+     \end{matrix}
+   \right.% Ne pas oublier le délimiteur invisible.
+ }}
+ \newcommand{\divp}[2]
+	{
+	  \frac{\partial #1}{\partial #2}
+	}
+
+\newcommand{\divt}[2]
+	{
+	  \frac{d #1}{d #2}
+	}
+
+\newcommand{\divpsnd}[2]
+	{
+	  \frac{\partial^2 #1}{\partial #2^2}
+	}
+
+\newcommand{\divts}[2]
+	{
+	  \frac{d^2 #1}{d #2^2}
+	}
+
+\newcommand{\rem}[1]
+{
+\cy{\underline{\blz Remarque: }#1}\vspace{0.5cm}
+}
+
+\newcommand{\props}[1]
+{
+\begin{mybox}
+\textbf{\rd{\underline{\blz Théorème:} #1}}
+\vspace{0.5cm}
+\newline
+}
+
+\newcommand{\thetap}{\dot{\theta}}
+
+\newcommand{\rot}[1]
+{
+\overrightarrow{rot}(\overrightarrow{#1})
+}
+
+\newcommand{\grad}[1]
+{
+\overrightarrow{grad}(\overrightarrow{#1})
+}
+
+\newcommand{\lapl}[1]
+{
+\Delta(\overrightarrow{#1})
+}
+
+\newcommand{\divs}[1]
+{
+div(\overrightarrow{#1})
+}
+
+\newcommand{\prope}
+{
+\end{mybox}
+}
+
+\newcommand{\defis}[1]
+{
+\begin{mybox}
+\textbf{\rd{\underline{\blz Définition:} #1}}
+\vspace{0.5cm}
+\newline
+}
+\newcommand{\defie}
+{
+\end{mybox}
+}
+\newcommand{\demos}[1]
+{
+\begin{demo}
+\textbf{\underline{\blz Démonstration:} #1}
+\newline
+}
+\newcommand{\demoe}
+{
+\end{demo}
+}
+\newcommand{\exe}[1]
+{
+\underline{\blz Exemple:} #1
+}
+
+\newcommand{\vs}
+{
+\vspace{0.25cm}
+}
+%=============================================
+
+%\usepackage[cm]{aeguill}
+
+%=============Mathématiques=================
+
+%--------------Raccourcis:------------------
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\C}{\mathbb{C}}
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\Q}{\mathbb{Q}}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\K}{\mathbb{K}}
+\newcommand{\M}{\mathcal{M}}
+\newcommand{\nint}[1]{#1 \in \N}
+\newcommand{\zint}[1]{#1 \in \N^*}
+\newcommand{\limi}[1]{\underset{#1 \to \infty}{lim}}
+\newcommand{\limn}[2]{\underset{#1 \to #2}{lim}}
+\newcommand{\x}{\times}
+\newcommand{\un}[1]{u_{#1}}
+\newcommand{\uns}{(u_n)_\nint{n}}
+\newcommand{\Sn}[1]{S_{#1}}
+\newcommand{\Sns}{(S_n)_\nint{n}}
+
+\newcommand{\seriegu}{\sum u_n}
+\newcommand{\seriegv}{\sum v_n}
+\newcommand{\harmonique}{\sum \frac{1}{n}}
+\newcommand{\SRieman}{\sum \frac{1}{n^\alpha}}
+\newcommand{\serie}[3]{\sum_{#1}^{#2}{#3}}
+\newcommand{\satps}{série à terme positif}
+\newcommand{\satp}{séries à termes positifs}
+
+\newcommand{\abs}[1]{\left\lvert#1\right\rvert}
+\DeclarePairedDelimiter{\ceil}{\lceil}{\rceil}
+
+%Format de fonctions:
+\newcommand{\fct}[5]
+	{
+	  \begin{array}{ccccc}
+		#1 & : & #2 & \to & #3 \\
+	    && #4 & \mapsto & #5 \\
+	  \end{array}
+	}
+\newcommand{\dfct}[2] {#1 \mapsto #2}
+%===================TESTS===================
+
+\begin{document}
+\chapter{Series Numériques}
+
+Dans tout le chapitre $\K$ = $\C$ ou $\R$
+
+\section{Série numérique}
+
+\defis{Série numérique}
+Soit $(u_n)_{n\in\N}$ un suite d'éléments de $\K$ \\ On pose $\forall n \in \N , S_n = \sum_{k = 0}^n u_k$ \ns
+
+On appelle \rd{série de terme général $u_n$}, notée $\sum u_n$, la suite $(S_n)_{n\in\N}$ \ns
+
+$S_n$ est appelée \rd{Somme partiel d'ordre n}
+\defie
+
+\rem{}
+\begin{enumerate}
+  \item Il se peut que la suite $(u_n)_{n \geq n_0}$ ne soit définie qu'à partir d'un rang $n_o$. On pose alors $\forall n \geq n_0$ , $S_n = \sum_{k=n_0}^{n}u_k$
+  \item On peut définir une structure d'espace vectoriel sur l'ensemble des séries en posant \ns
+  \begin{itemize}
+    \item $\sum u_n + \sum v_n = \sum (u_n +v_n)$
+    \item $\lambda \sum u_n = \sum (\lambda u_n)$
+  \end{itemize}
+  \item \underline{Bijection Suite Série:} \rd{Quand on connait $u_n$} , on connait $S_n$ : $S_n = \sum_{k=0}^n u_k$\ns
+
+  \dg{Réciperoque:} $\begin{cases} u_0 = S_0 \\
+  \forall n \geq 1 , u_n = S_n -S_{n-1}
+  \end{cases}$
+\end{enumerate}
+
+\newpage
+
+\exe{}
+\begin{itemize}
+  \item Les séries géométrique: $\sum q^n$ \ns
+On pose: $\forall n \in \N u_n = q^n$. \ns
+On a alors $\forall n \in \N, S_n = \begin{cases} n+1, $si $ q=1 \\
+\frac{1-q^{n+1}}{1-q}, $si $ q \neq 1
+\end{cases}$
+  \item Les séries de Riemann: \ns
+$\sum \frac{1}{n^\alpha} , \alpha \in \R$ On ne connait pas $S_n$
+\end{itemize}
+
+\section{Séries Convergentes}
+
+\defis{Série convergente, Somme d'une série}
+Soit $\sum u_n$ une série d'élément de $\K$ \\
+Soit $(S_n)_{n \in \N}$ la suite des sommes partielles \ns
+
+On dit que $\sum u_n$ converge ssi la suite $(S_n)$ converge
+et on note $S = \sum_{n=0}^{+\infty}$ \\ Sinon $\sum u_n$ diverge
+\defie
+
+\rem{}
+  \begin{itemize}
+    \item Ne pas écrire $\sum_{n=0}^{+\infty}u_n$ avant d'avoir montrer que $\sum u_n$ converge
+    \item On peut modifier ou supprimer (troncature) un nombre fini de termes sans modifier la nature de $\sum u_n$
+  \end{itemize}
+
+\defis{Reste d'une série convergente}
+  Soit $\sum u_{n+1}$ une série convergente de somme $S$ \ns
+  On pose $\forall n \N, R_n = S - S_n = \sum_{k=n+1}^{+\infty}$
+
+  $R_n$  est appelé reste d'ordre n de la série
+\defie
+
+\exe{Série géométrique:}\ns
+
+$\sum q^n , q \in \R^*$\ns
+On connait $S_n$,
+$S_n= \begin{cases}
+        n+1, $si $ q=1 \\
+        \frac{1-q^{n+1}}{1-q}, $si $ q \neq 1
+      \end{cases}$
+
+Alors $\sum q^n$ converge ssi $ q \in [ 0,1 [$ \ns
+On a alors \rd{$S=\frac{1}{1-q}$}
+
+d'ou $R_n = \frac{1}{1-q} - \frac{1-q^{n+1}}{1-q} = \frac{q^{n+1}}{1-q}$
+
+\newpage
+
+\exe{Série harmonique} $\sum \frac{1}{n}$\ns
+
+On pose $\forall n \in \N* , u_n = \frac{1}{n} et S_n = \sum_{k=1}^n \frac{1}{k}$
+
+\demos{Divergence Série harmonique}
+\begin{itemize}
+  \item Méthode 1 : Par l'absurde
+Supposons que $\harmonique$ converge\\
+Soit $\zint{n}$\\
+On a $S_{2n}-S_n = \serie{k=n+1}{2n}{\frac{1}{k}}$ \\
+Donc $\forall \zint{n} , S_{2n}-S_n \geq n \times \frac{1}{2n} = \frac{1}{2}$ \\
+or $\limi{n}(S_{2n}-S_n) = S-S = 0$\\
+\rd{CONTRADICTION}
+
+  \item Méthode 2 : Concavité de $\dfct{x}{ln(1+x)}$
+
+Par concavité de $\dfct{x}{ln(1+x)}$ on a : $\forall x > -1, ln(1+x) \leq x$\\
+En particulier $\zint{k} , ln(1+ \frac{1}{k}) \leq \frac{1}{k} $\ns
+
+Ainsi, $\forall \zint{n}, \serie{k=1}{n}{ln(1+\frac{1}{k})} \leq S_n$\\
+or $ln(1+\frac{1}{k}) = ln(1+k) - ln(k)$\\
+Donc $\forall \zint{n}, Sn \geq ln(n+1)$\\
+or$ \limi{n}ln(n+1) = +\infty$\\
+Donc $\limi{n}S_n = +\infty$ , Donc $\harmonique$ diverge\\
+
+  \item Méthode 3 : Par intégrales
+
+Soit $\fct{f}{[1,+\infty[}{\R}{x}{\frac{1}{x}}$
+
+Par décroissance de $f$ sur $[k,k+1]$ on a : $\frac{1}{k} \geq \int_k^{k+1}\frac{1}{x}dx$
+
+En sommant $\forall \zint{n},S_n \geq \int_1^{n+1}\frac{1}{x}dx$\\
+Donc $\limi{n}S_n = +\infty$
+\end{itemize}
+\demoe
+
+\exe{Série harmonique alternée} : $\sum \frac{(-1)^{n-1}}{n}$
+
+Soit $S_n  = \serie{k=1}{n}{\frac{(-1)^{n-1}}{n}}$
+
+Montrons que $(S_{2n})_\zint{n} (S_{2n+1})_\zint{n}$ convergent et ont la même limite\\
+On a si $\zint{n}$ \ns
+
+$S_{2n} = \serie{k=1}{2n}{\frac{(-1)^{k-1}}{k}} \ns = \serie{j=1}{n}{\frac{1}{2j-1}}-\serie{j=1}{n}{\frac{1}{2j}} \ns = \serie{k=1}{2n}{\frac{1}{k}} - 2 \serie{k=1}{n}{\frac{1}{2k}}$
+
+Donc $S_{2n} = \sum_{k = n+1}^{2n} \frac{1}{k}$
+
+On identifie une série de Riemann de terme $\fct{f}{\R}{\R}{\frac{k}{n}}{\frac{1}{1+\frac{k}{n}}}$
+
+d'ou $S_{2n} = \frac{1}{n} \serie{k=1}{n}{f(\frac{k}{n})}$\ns
+
+Or f est continue\\
+D'où $(S_{2n})_\zint{n}$ converge vers $\int_0^1 f(x)dx = ln(2)$\ns
+
+\exe{Série Télescopique} $\sum \frac{1}{n(n+1)}$
+
+Or $\forall \zint{n} , \frac{1}{n(n+1)} = \frac{1}{n} - \frac{1}{n+1}$
+
+D'ou $\forall \zint{n}, S_n = \serie{k=1}{n}{\frac{1}{k}-\frac{1}{k+1}} $ \ns
+$= 1 - \frac{1}{n+1}$
+
+Donc $\seriegu$ converge, et $\serie{n=1}{+\infty}{\frac{1}{n(n+1)}} =1$
+
+\props{Convergence des séries Télescopiques}
+Soit $(u_n)_\nint{n}$ une suite numérique\\
+La suite \rd{$(u_n)_\nint{n}$ converge} ssi la série Télescopique \rd{$\sum (u_{n+1} -u_n)$ converge}\\
+
+Avec $S = \serie{n=0}{+\infty}{u_{n+1}-u_n} = \limi{n}u_n -u_0$
+\prope
+
+\demos{}
+On a $\forall \nint{n}, S_n = \serie{k=0}{n}{u_{k+1}-u_k} = u_{n+1}-u_0$ par télescopage d'où le résultat
+\demoe
+
+\props{Condition de convergence}
+$\seriegu$ converge $\Rightarrow (u_n)_\zint{n}$ converge vers 0 \\
+Mais Réciperoquement $(u_n)_\zint{n}$ converge vers 0 $\nRightarrow \seriegu$ converge (cf $\harmonique$)
+\prope
+
+\demos{}
+Soit $\zint{n}$\\
+$u_n = S_n - S_{n-1}$\ns
+Or $(S_n)_\zint{n}$ et $(S_{n-1})_\zint{n}$ convergent et ont la même limite\\
+Donc $\uns$ converge vers 0
+\demoe
+
+\rem{Vocabulaire} si $\uns$ ne converge pas vers 0, on dit alors que $\seriegu$ diverge grossièrement
+
+\props{Cas $\K = \C$}
+Soit $\sum z_n$ une série complexe\\
+On pose $\forall \nint{n}, z_n =x_n +iy_n$\\
+or $\sum z_n $ converge ssi la suite $(\serie{k=0}{n}{z_k})_n$ converge\\
+Ssi $\begin{cases}
+\text{les suites réelles} (\serie{k=0}{n}{x_k})_n \text{et} (\serie{k=0}{n}{y_k})_n \text{convergent}\\
+\text{les séries} \sum x_n \text{et} \sum y_n \text{convergent}
+\end{cases}$
+\prope
+
+\props{Espace Vectoriel des séries convergentes}
+Soit $\seriegu$ et $\seriegv$ deux séries convergentes\\
+Soit $\lambda \in \R$
+
+Alors $\sum \lambda u_n +v_n$ converge et $\serie{k=0}{+\infty}{\lambda u_k+ v_k} = \lambda \serie{k=0}{+\infty}{u_k} + \serie{k=0}{+\infty}{v_k}$
+\prope
+
+\demos{}
+On a $\forall \nint{n} ,\serie{k=0}{n}{\lambda u_k+ v_k} = \lambda \serie{k=0}{n}{u_k} + \serie{k=0}{n}{v_k}$\ns
+
+Comme $\seriegu$ et $\seriegv$ convergent les sommes partielles aussi
+Donc on a le résultat attendu
+\demoe
+
+\section{Série de nombres réels positifs}
+
+Comme la nature d'une série ne dépend pas des premiers termes et qu'elle est invariante par multiplication par -1,on pourra adapter les théorèmes de ce paragraphe au cas des séries de nombres réels de signe constant à partir d'un certain rang
+
+\subsection{Théorème fondamental pour les séries à termes positifs}
+
+\props{fondamental}
+Soit $\seriegu$ une série de nombres réels positifs et $\Sns$ la suite de ses sommes partielles\\
+$\seriegu$ converge ssi la suite $\Sns$ est majorée\\
+Dans ce cas $S= sup(S_n)$ \ns Sinon $\limi{n} S_n = +\infty$
+\prope
+
+\demos{}
+Montrons que $\Sns$ est croissante\\
+Soit $\nint{n}$. On a $\Sn{n+1} - \Sn{n} = \un{n+1} \geq 0$ \\
+Donc $\Sns$ est croissante\\
+On conclue avec le Théorème des suites croissantes et majorées
+\demoe
+
+\subsection{Théorèmes de comparaison pour les \satps}
+
+On va comparer la nature de deux séries à termes positifs au sens de $ "\leq","O","o",""\sim"$
+
+\props{Majorations pours les \satps}
+Soient $\seriegu$ et $\seriegv$ deux séries de nombres réels positifs
+On suppose que
+\begin{enumerate}[label=\roman*)]
+  \item $\forall \nint{n} , u_n \leq v_n$
+  \item $ \seriegv$ converge
+\end{enumerate}
+Alors $\seriegu$ converge et $\serie{n=0}{+\infty}{u_n} \leq \serie{n=0}{+\infty}{v_n}$
+\prope
+
+\demos{}
+D'après i), par somme finie: \\
+(*) $\forall \nint{n}, \serie{k=0}{n}{u_k} \leq \serie{k=0}{n}{v_k}$ \ns
+
+Comme $\seriegv$ converge, la suite $(\serie{k=0}{n}{v_k})_\nint{n}$ converge \\
+Donc majorée.
+
+D'ou d'apres (*) la suite $(\serie{k=0}{n}{u_k})_\nint{n}$ est majorée\\
+Par Théorème fondamental pour les \satps, $\seriegu$ converge et en passant à la limite dans (*) $\serie{n=0}{+\infty}{u_n} \leq \serie{n=0}{+\infty}{v_n}$
+\demoe
+
+\props{comparaison au sens de $"O"$ et $"o"$}
+Soient $\seriegu$ et $\seriegv$  deux séries de nombres réels positifs\\
+Supposons
+\begin{enumerate}[label=\roman*)]
+  \item $u_n = O(v_n) $ou$ u_n = o(v_n)$
+  \item $\seriegv$ converge
+\end{enumerate}
+Alors $\seriegu$
+\prope
+
+\demos{}
+Comme $ u_n = o(v_n) \Rightarrow u_n = O(v_n)$ on ne démontre que le second cas\\
+
+Par définition de i), $\exists M \in \R^+,\exists N \in \N,\forall n geq N , \rd{0} \leq \un{n} \leq M v_n$ \\
+Par ii) $\seriegv$ converge donc $sum M v_n$ \\
+Par théorème de majoration pour les \satps, $\seriegu$ converge
+\demoe
+
+\props{comparaison au sens de $\sim$}
+Soient $\seriegu$ et $\seriegv$  deux séries de nombres réels positifs\\
+On suppose que $u_n \sim v_n$\\
+Alors $\seriegu$ converge $\Leftrightarrow \seriegv$ converge
+\prope
+
+\demos{}
+On a $u_n \sim v_n$\\
+Donc  $u_n = O(v_n)$ et  $v_n = O(u_n)$
+Par théorème précédent on obtient l'équivalence
+\demoe
+
+\props{Série de Riemann}
+Soit $\alpha \in \R$ \\
+$\SRieman$ converge $\Leftrightarrow \alpha > 1$
+\prope
+
+\demos{}
+cas 1: $\alpha  \leq 1$\\
+Or $\forall \zint{n}, \frac{1}{n} \leq 1$\\
+D'ou avec $\alpha \leq 1$ on a $\forall \zint{n}, \frac{1}{n^\alpha} \geq \frac{1}{n} \geq 0$\\
+Or $\harmonique$ diverge d'ou par théorème de majoration pour les \satps \ns
+
+cas 2: $\alpha > 1$ Par intégrale\\
+Soit $\fct{f}{[1,+\infty[}{\R^+}{x}{\frac{1}{x^\alpha}}$
+
+On note $f$ décroissante et Par croissance de l'intégrale:\\
+$\forall k \geq 2, \frac{1}{k^\alpha} \leq \int_{k-1}^k \frac{1}{x^\alpha} dx$\\
+D'ou $\forall n \geq 2, \serie{k=1}{n}{\frac{1}{k^\alpha}} \leq \int_1^n \frac{1}{x^\alpha} dx$\ns
+
+or $\int_1^n \frac{1}{x^\alpha} dx $\ns
+
+$ = \int_1^n x^{-\alpha}$\ns
+
+$= \left[\frac{x^{-\alpha +1}}{-\alpha +1} \right]_1^n$ \ns
+
+$= \frac{n^{-\alpha+1}-1}{-\alpha +1}$
+
+Donc $\int_1^n \frac{1}{x^\alpha}dx = \frac{(1-n^{-\alpha	+1})}{\alpha -1}$\ns
+
+D'où $\forall n \geq 2, \serie{k=2}{n}{\frac{1}{k^\alpha}} \leq \frac{(1-n^{-\alpha	+1})}{\alpha -1} \leq \frac{1}{\alpha-1}$
+
+Ainsi par théorème fondamental pour les \satps, $\SRieman$ converge\\
+En pratique, on compare la nature de $\seriegu$ à celle de $\SRieman$ ou à celle de $\serie{}{}{q^n}$, en formant le quotient $(\frac{u_n}{\frac{1}{n^\alpha}}) = n^\alpha u_n$ ou le quotient $\frac{\un{n}}{q^n}$
+\demoe
+
+\exe{$\sum e^{-(ln(n))^a}$}
+
+$\seriegu$ est une \satp \\
+Si $a=1 \un{n} = \frac{1}{n}$ et $\seriegu$ diverge\\ \vskip{1cm}
+Cas 1 : $a<1$\\
+On a $\forall n \geq 3, ln(n) \geq 1$\\
+Comme $a <1$, on $\forall n \geq 3, ln(n)^a \leq ln(n)$ \\
+Donc
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+\end{document}

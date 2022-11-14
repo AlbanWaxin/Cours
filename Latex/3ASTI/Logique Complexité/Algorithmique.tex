@@ -1,0 +1,307 @@
+\documentclass[12pt]{report}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[fleqn]{amsmath}
+\usepackage{amsfonts,amssymb,stmaryrd}
+\usepackage[english]{babel}
+\usepackage{pdfpages}
+
+%=============Affichage=======================
+\usepackage{fullpage}
+\usepackage{mathtools}
+\usepackage{lmodern}
+\usepackage{xcolor}
+\usepackage{enumitem}
+\usepackage{tikz,tkz-tab}
+\usepackage[ruled,vlined]{algorithm2e}
+\title{Cours Mathématiques MP*}
+\author{Waxin Alban}
+
+\definecolor{almond}{rgb}{0.94, 0.87, 0.8}
+\definecolor{champagne}{rgb}{0.97, 0.91, 0.81}
+\definecolor{dgreen}{rgb}{0.0, 0.5, 0.0}
+\definecolor{bc}{rgb}{0.8588, 0.8980, 0.9450}
+
+\setlength{\topmargin}{-1.5cm}
+\setlength{\textheight}{25cm}
+\setlength{\textwidth}{16cm}
+\setlength{\oddsidemargin}{-1.5cm}
+\setlength{\evensidemargin}{50cm}
+
+\newcommand{\rd}[1]{\textcolor{red}{#1}}
+\newcommand{\g}[1]{\textcolor{lime}{#1}}
+\newcommand{\dg}[1]{\textcolor{dgreen}{#1}}
+\newcommand{\blue}[1]{\textcolor{blue}{#1}}
+\newcommand{\cy}[1]{\textcolor{cyan}{#1}}
+\newcommand{\blz}{$\blacklozenge$}
+\newcommand{\ns}{\\\indent\indent\vspace{0.25cm}}
+\setcounter{secnumdepth}{5}% profondeur de la table des matières
+\usepackage{titlesec}
+
+
+\titleformat{\chapter}[frame]
+{\Huge}
+{\filright\rmfamily\bfseries\Huge\enspace\thechapter\enspace}
+{18pt}
+{\rmfamily\huge\bfseries\filcenter}
+% rmfamily=roman, sffamily = sans serif ou ttfamily =type writer
+\usepackage[many]{tcolorbox} % Creation de box collorable pour le texte non intégré
+\newtcolorbox{mybox}{colback=bc,
+colframe=black,arc=0mm,sharp corners= northwest,arc=10pt}
+
+\newtcolorbox{demo}{colback=almond,
+colframe=black,arc=0mm,sharp corners= northeast,arc=10pt}
+
+\renewcommand*{\overrightarrow}[1]{\vbox{\halign{##\cr
+ \tiny\rightarrowfill\cr\noalign{\nointerlineskip\vskip1pt}
+ $#1\mskip2mu$\cr}}}
+
+\newcommand{\rem}[1]
+{
+\subparagraph*{\underline{Remarque:#1}}\mbox{}\\
+}
+
+\newcommand{\props}[1]
+{
+\begin{mybox}
+\textbf{\rd{\underline{\blz Propriété:} #1}}
+\vspace{0.5cm}
+\newline
+}
+
+\newcommand{\prope}
+{
+\end{mybox}
+}
+
+\newcommand{\scal}[2]
+{
+<#1|#2>
+}
+
+\newcommand{\defis}[1]
+{
+\begin{mybox}
+\textbf{\rd{\underline{\blz Définition:} #1}}
+\vspace{0.5cm}
+\newline
+}
+\newcommand{\defie}
+{
+\end{mybox}
+}
+\newcommand{\demos}[1]
+{
+\begin{demo}
+\textbf{\underline{\blz Démonstration:} #1}
+\newline
+}
+\newcommand{\demoe}
+{
+\end{demo}
+}
+\newcommand{\exe}[1]
+{
+\subparagraph*{\underline{Exemple:#1}}\mbox{}\\
+}
+
+\newcommand{\vs}
+{
+\vspace{0.25cm}
+}
+
+\newcommand{\thms}[1]
+{
+\begin{mybox}
+\textbf{\rd{\underline{\blz Théorème:} #1}}
+\vspace{0.5cm}
+\newline
+}
+
+\newcommand{\thme}
+{
+\end{mybox}
+}
+
+\newcommand{\coros}[1]
+{
+\begin{mybox}
+\textbf{\rd{\underline{\blz Corolaire:} #1}}
+\vspace{0.5cm}
+\newline
+}
+
+\newcommand{\coroe}
+{
+\end{mybox}
+}
+
+\newcommand{\lems}[1]
+{
+\begin{mybox}
+\textbf{\rd{\underline{\blz Lemme:} #1}}
+\vspace{0.5cm}
+\newline
+}
+
+\newcommand{\leme}
+{
+\end{mybox}
+}
+%=============================================
+
+%\usepackage[cm]{aeguill}
+
+%=============Mathématiques=================
+
+%--------------Raccourcis:------------------
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\C}{\mathbb{C}}
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\Q}{\mathbb{Q}}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\K}{\mathbb{K}}
+\newcommand{\M}{\mathcal{M}}
+\newcommand{\nint}[1]{#1 \in \N}
+\newcommand{\zint}[1]{#1 \in \N^*}
+\newcommand{\limi}[1]{\underset{#1 \to \infty}{lim}}
+\newcommand{\limn}[2]{\underset{#1 \to #2}{lim}}
+\newcommand{\x}{\times}
+\newcommand{\un}[1]{u_{#1}}
+\newcommand{\uns}{(u_n)_\nint{n}}
+\newcommand{\Sn}[1]{S_{#1}}
+\newcommand{\Sns}{(S_n)_\nint{n}}
+\newcommand{\ol}[1]{\overline{#1}}
+\newcommand{\znz}{\Z/n\Z}
+\renewcommand{\o}{\circ}
+
+\newcommand{\seriegu}{\sum u_n}
+\newcommand{\seriegv}{\sum v_n}
+\newcommand{\harmonique}{\sum \frac{1}{n}}
+\newcommand{\SRieman}{\sum \frac{1}{n^\alpha}}
+\newcommand{\serie}[3]{\sum_{#1}^{#2}{#3}}
+\newcommand{\satps}{série à terme positif}
+\newcommand{\satp}{séries à termes positifs}
+\newcommand{\pl}[1]{\mathbb{#1}[X]}
+\newcommand{\som}[2]{\sum\limits_{#1}^{#2}}
+
+
+\newcommand{\abs}[1]{\left\lvert#1\right\rvert}
+\DeclarePairedDelimiter{\ceil}{\lceil}{\rceil}
+
+%Format de fonctions:
+\newcommand{\fct}[5]
+	{
+	  \begin{array}{ccccc}
+		#1 & : & #2 & \to & #3 \\
+	    && #4 & \mapsto & #5 \\
+	  \end{array}
+	}
+\newcommand{\dfct}[2] {#1 \mapsto #2}
+
+\renewcommand{\abs}[1]{|#1|}
+\newcommand{\nm}[2]{ ||#1||_{#2} }
+%===================TESTS===================
+
+\begin{document}
+
+\chapter{}
+
+\section{Tri par insertion}
+
+\begin{center}
+    \scalebox{0.75}{
+    
+    \begin{minipage}{\linewidth}
+\begin{algorithm}[H]
+\SetAlgoLined
+	\KwData{Un tableau A de longueur n}
+	\KwResult{Un tableau trié}
+	\BlankLine
+	 int $i,j,clé$ \;
+	\For{$j = 2, j \leq n,j++$}
+	{
+	$clé \gets A[j]$ \;
+	$i \gets j-1$ \;
+	 \While{($i > 0$ and $A[i] > clé$)}
+	 	{
+	 	  $A[i+1] \gets A[i]$ \;
+	 	  $i \gets i-1$ \;
+	 	}
+	 $A[i+] \gets clé$ \;
+	}
+		
+\caption{Pseudo code du tri par insertion}
+\end{algorithm}
+\end{minipage}%
+    }
+\end{center}
+
+\paragraph*{Invariants de boucle}
+
+$A_0$: tableau initial\\
+$A_j$: tableau en mémoire au début de l'itération $j$ de la boucle \verb|for|\\
+$A$: tableau en mémoire à l'instant courant\\
+$A[a...b]$:  le sous tableau contenant les éléments dont l'indice $k$ est $a \leq k \leq b$
+
+\begin{enumerate}
+	\item $A[j+1 \to n] = A_j[j+1 \to n]$
+	\item $A[1 \to i] = A_j[1 \to i]$
+	\item $A[i+2 \to j] =A_j[i+1 \to j-1]$
+	\item $clé = A_j[j]$
+	\item $A[i+2 \to j] > clé$
+\end{enumerate}
+
+\paragraph*{Initialisation}
+Rq: $A[]$ : tableau vide
+\begin{enumerate}
+	\item $A[j+1 \to n] = A_j[j+1 \to n]$ oui car on n'a pas modifié le tableau
+	\item $A[1 \to i] = A_j[1 \to i]$ idem
+	\item $A[i+2 \to j] = \underbrace{A_j[j+1 \to j]}_{tableau vide} = \underbrace{A_j[j \to j-1]}_{tableau vide}$ 
+	\item vide
+	\item $A[i+2 \to j]$: tableau vide donc tous les éléments du tableau sont >clé
+\end{enumerate}
+
+\paragraph*{Conservation}
+On considère l'itération $j = k$\\
+On suppose les propriétés 1,2,3,4,5 vraies au début de l'itération\\
+\subparagraph*{Objectifs} prouver que les propriétés sont vraies au début de l'itéartion suivante\\
+On prouve la préservation donc on suppose qu'on est rentré dans la boucle \verb|while| et $i > 0$ et $A[i] > clé$ 
+\begin{enumerate}
+ \item vrai car clé non modifié
+ \item i est initialisé à $j -1$\\
+ toujours décrémenté\\
+ et on modifie la case i+1 qui est donc d'indice  $\leq j$\\
+ donc le tableau $A[j+1 \to n]$ n'est pas modifié
+ \item ligne 6 la case d'indice $i+1$ est modifiée\\
+ ligne 7 $i \gets i-1$ donc avec la nouvelle valeur de $i$ c est la case $A[i+2]$ qui a été modifiée \\
+ Donc les cases $A[1 \to i]$ ne sont pas modifiées
+ \item[5] ligne 5 $\underbrace{A[i+2 \to j]}_{> clé} = A_j[i+1 \to j-1]$\\
+ $A[i] > clé$ ( test du while)\\
+ ligne 6 $A[i+1] \gets A[i] = A_j[i]$\\
+ Donc $A[i+1 ... j] =  A_j [i \to j-1]$\\
+ ligne 7 $i \gets i-1$\\
+ Donc $A[i+2 \to j ] = A_j[i+1 \to j-1]$ 
+
+\end{enumerate}
+
+\subsection*{Compléxité}
+
+\begin{align*}
+T(n)  &= ac + \sum_{j=2}^n (bc +t_j)\\
+&= ac + \sum_{j=2}^nbc + \sum_{j=2}^n t_j\\
+&= (a-b)c + nbc + \sum_{j=2}^n t_j
+\end{align*}
+
+\subparagraph*{meilleur des cas: tableau trié}
+Lors de la $1^{ère}$ itération de la boucle while\\
+le test $A[i] > clé$ est faux\\
+donc $t_j = \beta$ (temps  constant)\\
+$T_M(n) =  \Theta(n)$\\
+
+\subparagraph*{Pire des cas}
+$T_P(n) = O(n^2)$
+
+\chapter{Complexité}
+
+\end{document}

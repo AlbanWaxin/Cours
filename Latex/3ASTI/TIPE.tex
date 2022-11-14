@@ -1,0 +1,516 @@
+\documentclass{beamer}
+\usetheme{Boadilla}
+\usecolortheme{beaver}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{amsmath,amsfonts,amssymb,stmaryrd} 
+\usepackage[english]{babel}
+\usepackage{minted}
+\usepackage{xcolor}
+\usepackage{color}
+\usepackage{tcolorbox}
+\tcbuselibrary{minted,skins}
+%\usemintedstyle{monokai}
+%\definecolor{bg}{rgb}{0.25,0.25,0.25}
+%\newminted[ocaml2]{Ocaml}{linenos=true, texcl=true}
+%\newminted[ocaml1]{Ocaml}{linenos=true, texcl=true, bgcolor=bg}
+\usepackage{mathtools}
+\usepackage[ruled,vlined]{algorithm2e}
+
+\title{TIPE: Détection de Contours}
+\subtitle{Détection de mouvement}
+\author{Alban WAXIN n°39534}
+\date
+
+
+
+\newtcblisting{ocaml3}[1][]{
+  listing engine=minted,
+  colback=ocamlbg,
+  colframe=black!70,
+  listing only,
+  minted style=monokai,
+  minted language=Ocaml,
+  minted options={linenos=true,numbersep=3mm,texcl=true,#1},
+  left=5mm,enhanced,
+  overlay={\begin{tcbclipinterior}\fill[black!25] (frame.south west)
+            rectangle ([xshift=5mm]frame.north west);\end{tcbclipinterior}}
+}
+\definecolor{ocamlbg}{rgb}{0.25,0.25,0.25}
+
+\renewcommand*{\overrightarrow}[1]{\vbox{\halign{##\cr 
+  \tiny\rightarrowfill\cr\noalign{\nointerlineskip\vskip1pt} 
+  $#1\mskip2mu$\cr}}}
+
+\newcommand*{\Coordp}[4]{% 
+  \ensuremath{{#1}\, 
+    \left\lvert 
+      \begin{matrix} 
+        #2\\ 
+        #3\\
+        #4
+      \end{matrix}  
+    \right.% Ne pas oublier le délimiteur invisible. 
+  }}
+  
+\newcommand{\divp}[2]
+	{
+	  \frac{\partial #1}{\partial #2}
+	}
+	
+\newcommand{\fct}[5]
+	{
+	  \begin{array}{ccccc}
+		#1 & : & #2 & \to & #3 \\
+	    && #4 & \mapsto & #5 \\
+	  \end{array}
+	}
+	
+\newcommand{\divt}[2]
+	{
+	  \frac{d #1}{d #2}
+	}	
+	
+\newcommand{\divpsnd}[2]
+	{
+	  \frac{\partial^2 #1}{\partial #2^2}	
+	}
+
+\newcommand{\divts}[2]
+	{
+	  \frac{d^2 #1}{d #2^2}	
+	}
+
+\newcommand{\demos}[1]
+{
+\cy{\underline{\blz Démonstration: }#1}\vspace{0.5cm} 
+}
+
+\newcommand{\props}[1]
+{
+ \begin{mybox}
+ \textbf{\rd{\underline{\blz Propriétés:} #1}}
+ \vspace{0.5cm}
+ \newline
+}
+
+\newcommand{\thetap}{\dot{\theta}}
+
+\newcommand{\rot}[1]
+{
+ \overrightarrow{rot}(\overrightarrow{#1})
+}
+
+\newcommand{\grad}[1]
+{
+ \overrightarrow{grad}(\overrightarrow{#1})
+}
+
+\newcommand{\lapl}[1]
+{
+ \Delta(\overrightarrow{#1})
+}
+
+\newcommand{\divs}[1]
+{
+ div(\overrightarrow{#1})
+}
+
+\newcommand{\prope}
+{
+ \end{mybox}
+}
+
+\newcommand{\defis}[1]
+{
+ \begin{mybox}
+ \textbf{\rd{\underline{\blz Définition:} #1}}
+ \vspace{0.5cm}
+ \newline
+}
+\newcommand{\defie}
+{
+ \end{mybox}
+}
+\newcommand{\discu}[1]
+{
+ \blue{\underline{\blz Discussion:} #1}
+}
+
+\newcommand{\vs}
+{
+ \vspace{0.25cm}
+}
+\newcommand{\ns}{\\ \indent \indent \vspace{0.15cm}}
+\newcommand{\MP}{\mathbb{P}}
+\newcommand{\bxt}[1]{\boxed{\text{#1}}}
+\newcommand{\rd}[1]{\textcolor{red}{#1}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\C}{\mathbb{C}}
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\Q}{\mathbb{Q}}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\K}{\mathbb{K}}
+\newcommand{\M}{\mathcal{M}}
+
+\newcommand{\abs}[1]{\left\lvert#1\right\rvert}
+\DeclarePairedDelimiter{\ceil}{\lceil}{\rceil}
+
+\begin{document}
+\frame{\titlepage}
+
+\begin{frame}
+%\includegraphics{}
+\begin{block}
+{Problématique:} Comment à partir d'un document image obtenir une répartition exhaustive des différentes constituantes?
+\end{block}
+\end{frame}
+
+\begin{frame}
+\frametitle{Sommaire}
+\begin{columns}[t]
+  \begin{column}{7.5cm}
+  \tableofcontents[sections={1,2}]
+  \end{column}
+  \begin{column}{4.5cm}
+  \tableofcontents[sections={3}]
+  \end{column}
+  \end{columns}
+\setcounter{tocdepth}{2}
+\end{frame}
+
+\section{Introduction}
+\subsection{Définitions}
+
+\begin{frame}[fragile]
+\frametitle{Cadre d'étude}
+Détermination des zones d'intérêt d'une image couleur visant au suivi  par expansion ou rétractation de la zone\\
+
+\underline{Définitions}
+
+\begin{itemize}
+\item Pixel: triplet comportant l'information de l'identité lumineuse d'une partie de l'image, $(l,u,v) \in \R^3 $
+\item Image: Matrice $M \in \mathcal{M}_{n\times m}(\R^3)$ composée d'informations de pixels
+\end{itemize}  
+\end{frame}
+
+\begin{frame}
+\frametitle{Objectif de l'étude}
+
+Dans cette étude l'objectif est double,
+
+\begin{enumerate}
+\item A partir d'images considérés séparément, déterminer les différentes zones constituants une séparation de contenu
+\item Et cela en utilisant une méthode de smoothing puis de clustering ou une méthode d'expansion
+
+Banques d'étude:
+\begin{figure}[h]
+    \begin{minipage}[c]{.55\linewidth}
+        \centering
+        \includegraphics[scale=1]{../Documents/docs LaTeX/Cours de Math/Screenshot_1.jpg}
+        \includegraphics[scale=0.90]{../Documents/docs LaTeX/Cours de Math/Screenshot_2.jpg}
+        \includegraphics[scale=0.68]{../Documents/docs LaTeX/Cours de Math/Screenshot_3.jpg}
+        \caption{Clichés médicaux}
+    \end{minipage}
+	\begin{minipage}[c]{.39\linewidth}
+        \centering
+        \includegraphics[scale=0.16]{../Documents/docs LaTeX/Cours de Math/satelitte0.jpg}
+        \includegraphics[scale=0.16]{../Documents/docs LaTeX/Cours de Math/satelitte.jpg}
+        \caption{Clichés satellites}
+	\end{minipage}
+\end{figure}
+\end{enumerate}
+\end{frame}
+
+\section{Homogénéisation}
+\subsection{Algorithme du Mean Shift}
+
+\begin{frame}
+\frametitle{Partie I}
+\begin{block}{}
+\begin{center}
+Méthode de Smoothing et Clustering
+\end{center}
+\end{block}
+\end{frame}
+
+\begin{frame}
+\frametitle{Procédures antérieur}
+
+Avant toute séparation de région, il peut être nécessaire d'uniformiser le contenu.Pour cela on fait appel à un algorithme de "Mean Shift"
+\small
+\begin{algorithm}[H]
+\SetAlgoLined
+\KwData{$D$ ensemble de pixels\\
+$E$ ensemble de points qui représentent les pics de données\\K une application, représentant géométriquement une fenêtre d'appartenance}
+\KwResult{Image homogénéisée}
+initialisation\;
+\While{Non convergé}{
+	M <- listevide\;
+	\For{$x \in E$}{
+		Placer $K$ en $x$\;
+		Déterminer la moyenne $m$ des points de D compris dans la fenêtre\;
+		Ajouter $m$ à M
+}
+	E <- M
+}
+\caption{Mean Shift}
+\end{algorithm}
+\normalsize
+On suppose $E \subset D$\\
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Principe du Mean Shift}
+\begin{figure}[h]
+    \begin{minipage}[c]{.55\linewidth}
+        \centering
+        \includegraphics[scale=0.08]{../Documents/docs LaTeX/Cours de Math/explication.jpg}
+        \includegraphics[scale=0.08]{../Documents/docs LaTeX/Cours de Math/explication2.jpg}
+        \includegraphics[scale=0.08]{../Documents/docs LaTeX/Cours de Math/explication3.jpg}
+        \caption{Itérations 0,1,2}
+    \end{minipage}
+	\begin{minipage}[c]{.39\linewidth}
+        \centering
+        \includegraphics[scale=0.1]{../Documents/docs LaTeX/Cours de Math/explication4.jpg}
+        \includegraphics[scale=0.1]{../Documents/docs LaTeX/Cours de Math/explication5.jpg}
+        \caption{Itérations 3,4}
+	\end{minipage}
+\end{figure}
+\end{frame}
+
+\begin{frame}
+\frametitle{Représentation 3D}
+\begin{figure}
+\includegraphics[scale=0.23]{../Documents/docs LaTeX/Cours de Math/principe6.png}
+\caption{Espace caractéristique}
+\end{figure}
+\end{frame}
+
+\subsection{Terminaison de l'algorithme}
+
+\begin{frame}
+\frametitle{Initialisation Mathématique}
+
+On muni $\R^3$,de sa norme usuelle et de son produit scalaire <|>\ns
+
+La condition de convergence de l'algorithme est la convergence pour une zone donnée des éléments de E en un seul point 
+
+Ce qui se traduit par un confinement des points de E a une boule de rayon $r$ tendant vers 0.\\
+
+
+\underline{diamètre:} $d = d(\underbrace{max}_{x \in D}d(x,0),\underbrace{min}_{x \in D}d(x,0))$
+
+or les données ne sont pas réparties uniformément dans $\R^3$ ,\\
+Soit $X \in R^3, ||X|| = 1$
+On pose alors soit $d_X =  \underbrace{max}_{x \in D}(<x|X>)-\underbrace{min}_{x \in D}(<x|X>)$\\
+Et $d = sup_{||X||=1}(d_X)$
+
+\end{frame}
+
+\begin{frame}
+Définissons les termes apparaissant dans l'algorithme\\
+$\fct{K}{\R^5}{\R}{x}{\begin{cases} f(x), & ||x|| \leq \lambda\\
+0, & ||x|| > \lambda
+\end{cases}}$  appelée Noyau définit l'appartenance d'un point à un espace\\
+Durant l'algorithme on calcule la moyenne:$m(a) = \frac{\sum_{x\in D}K(x-a)x}{\sum_{x\in D}K(x-a)}$\\
+On notera $m(D) = \lbrace m(x), x \in D \rbrace$
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Convergence de l'algorithme}
+Montrons que $d(m(D))< d(D)$\\
+Or $d(D) = sup_{||X||=1}(\underbrace{max}_{x \in D}(<x|X>)-\underbrace{min}_{x \in D}(<x|X>))$\\
+Soit $X \in \R^3$\\
+Notons $\alpha_F = \underbrace{max}_{x \in F}(<x|X>) , \beta_F = \underbrace{min}_{x \in F}(<x|X>)$\\
+Montrons alors que $\alpha_{m(D)} - \beta_{m(D)} < \alpha_{D} -\beta_{D}$\\
+\begin{align*}
+\alpha_{m(D)} - \beta_{m(D)} &\leq \alpha_{D} - \beta_{m(D)} \text{ (linéarité)}\\
+&= \alpha_{D} - \beta_{m(D)} + \beta_{D} - \beta_{D}\\
+&\leq \alpha_{D}- \beta_{D} + \beta_{D} - \beta_{m(D)}\\
+\end{align*}
+\end{frame}
+
+\begin{frame}
+\frametitle{Convergence de l'algorithme}
+Montrons donc que  $\beta_{D} - \beta_{m(D)} < 0 $\\
+or $\forall x \in \R^3$
+\scriptsize
+\begin{align*}
+\beta_{D} - <m(x)|X> &= \beta_D - <\frac{\sum_{x' \in D} K(x' - x)x'}{\sum_{x' \in D} K(x' - x)}|X>\\
+&= \beta_D - \frac{\sum_{x' \in D} K(x' - x)<x'|X>}{\sum_{x' \in D} K(x' - x)}\\
+&= \frac{\sum_{x' \in D} K(x' - x)(\beta_D - <x'|X>)}{\sum_{x' \in D} K(x' - x)}\\
+\end{align*}
+\normalsize
+or $\forall x' \in D, \beta_D - <x'|X> \leq 0$\\
+Donc $\frac{\sum_{x' \in D} K(x' - x)(\beta_D - <x'|X>)}{\sum_{x' \in D} K(x' - x)} < 0$\\
+Donc $\alpha_{m(D)} - \beta_{m(D)} < \alpha_{D} - \beta_{D}$\\
+Donc si cela est vrais pour tout X alors: $d(m(D)) < d(D)$\\
+Donc \boxed{\text{L'algorithme termine}} 
+\end{frame}
+
+\subsection*{Résultats}
+
+\begin{frame}
+\frametitle{Résultats émulé}
+Le meanshift n'ayant pas de réalité visuel une estimation du résultat  sur l'image 1 serait
+\begin{figure}
+\begin{minipage}[c]{.55\linewidth}
+        \centering
+        \includegraphics[scale=1.5]{../Documents/docs LaTeX/Cours de Math/Résultat 1.jpg}
+        \caption{points initiaux}
+    \end{minipage}
+	\begin{minipage}[c]{.39\linewidth}
+        \centering
+        \includegraphics[scale=1.5]{../Documents/docs LaTeX/Cours de Math/Résultat 2.jpg}
+        \caption{Itérations 3,4}
+	\end{minipage}
+\end{figure}
+\end{frame}
+
+\subsection*{Complexité}
+
+\begin{frame}
+\frametitle{Complexité}
+Les couts sont:\
+\begin{itemize}
+\item calcul du noyau: \underline{constant}
+\item calcul de la moyenne pour un point : \underline{$n*C$}
+\item nombre de calcul de moyenne par itération: \underline{$n$}
+\item nombre d'itération : fini , $k$
+\end{itemize}
+\begin{block}{Total}
+total temporel: $k*c*n^2 = O(n^2)$
+\end{block} 
+\end{frame}
+
+\begin{frame}
+\frametitle{Avantages et Défauts}
+\begin{figure}
+\includegraphics[scale=0.5]{../Documents/docs LaTeX/Cours de Math/avantages.jpg}
+\caption{Espace caractéristique}
+\end{figure}
+\end{frame}
+
+\subsection*{Groupement et Labels}
+
+\begin{frame}
+\frametitle{Algorithme}
+\scriptsize
+\begin{algorithm}[H]
+\SetAlgoLined
+\KwData{M pixels avec leur "shift"\\
+rg Rayon Géométrique, rc Rayon de couleur}
+\KwResult{Tableau des labels}
+initialisation\;
+L <- Tableauvide
+\For{$x \in M$}
+	{
+	\For{$y \in M \to x$}
+		{
+		\eIf{$x$ Non attribué}
+			{
+				\eIf{distance < rg et distance couleur < rc}
+					{
+					Affecter le label de $y$ à $x$
+					}
+					{\eIf{tableau fini}
+						{
+						 Créer nouveau Label\\
+						 Affecter le label à $x$
+						}
+						{}
+					}
+			}
+			{}
+		}
+	}
+\caption{Affectation de Labels}
+\end{algorithm}
+\end{frame}
+
+\begin{frame}
+\frametitle{Résultats finaux}
+\end{frame}
+
+\section{Croissance de Régions}
+
+\begin{frame}
+\begin{block}{Partie II}
+Croissance de Régions
+\end{block}
+\end{frame}
+
+\begin{frame}
+\frametitle{Principe}
+L'algorithme de Croissance de Régions est un Algorithme en 3 étapes:
+\begin{enumerate}
+\item Détermination de la "Seed"
+\item Croissance connexe des régions
+\item Fusion des régions connexe dont la valeur moyenne est assez proche
+\end{enumerate} 
+\end{frame}
+
+\begin{frame}
+\frametitle{Illustration}
+\begin{figure}
+\includegraphics[scale=0.5]{../Documents/docs LaTeX/Cours de Math/temporaire.png}
+\caption{Espace caractéristique}
+\end{figure}
+\end{frame}
+
+\subsection*{Croissance}
+
+\begin{frame}
+\frametitle{Croissance des Régions}
+\scriptsize
+\begin{algorithm}[H]
+\SetAlgoLined
+\KwData{S Ensemble de pixel d'intérêts\\
+r seuil d'homogénéité}
+\KwResult{Matrice des pixels avec leur région}
+initialisation\;
+Créer une pile P\\
+Empiler S dans P\\
+\While{P n'est pas vide}{
+$x$ <- Dépiler P \\
+\eIf{$x$ n'a pas de région}
+	{
+	V <- Voisins(x)
+	\eIf{$\forall v \in$ V, $v$ n'a pas de région}
+		{Créer une région et l'affecter à $x$}
+		{\eIf{$x$ est homogène à la région}{ajouter la région à\\ Empiler V(sans région) dans P}{Créer une région et l'affecter à $x$}
+		}
+	}	
+	{}
+	}
+	
+\caption{Croissance}
+\end{algorithm}
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Critère d'homogénéité}
+Plusieurs critères sont possibles
+\begin{itemize}
+\item \underline{Contraste:} P(R) est vrais ssi ${x \in R}(x) -min_{x \in R}(x) \leq r$
+\item \underline{Écart-type:} P(R) est vrais ssi $\sum_{x \in R} (x- moy)^2 \leq r^2$
+\item \underline{Faiblesse du gradient:} P(R) est vrais ssi $\forall x,y voisins \in R^2, |x-y| < r$
+\end{itemize}
+
+Dans une étude en image couleur l'écart-type et la faiblesse du gradient sont plus intéressant car les distances sont calculées par normes (donc applicable à $R^3$)
+\end{frame}
+
+\begin{frame}
+\frametitle{Complexité}
+La partie croissance de l'algorithme parcours au plus l'ensemble des pixels de l'image
+donc si tout pixel rentre dans une région ce qui n'est pas forcement le cas la complexité de parcours est de $n^2$ de plus 
+\end{frame}
+
+
+
+\end{document}
+

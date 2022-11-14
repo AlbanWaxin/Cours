@@ -1,0 +1,1191 @@
+\documentclass{beamer}
+\usetheme{Boadilla}
+\usecolortheme{beaver}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{amsmath,amsfonts,amssymb,stmaryrd}
+\usepackage[english]{babel}
+\usepackage{minted}
+\usepackage{xcolor}
+\usepackage{color}
+\usepackage{tcolorbox}
+\tcbuselibrary{minted,skins}
+%\usemintedstyle{monokai}
+%\definecolor{bg}{rgb}{0.25,0.25,0.25}
+%\newminted[ocaml2]{Ocaml}{linenos=true, texcl=true}
+%\newminted[ocaml1]{Ocaml}{linenos=true, texcl=true, bgcolor=bg}
+\usepackage{mathtools}
+\usepackage[ruled,vlined]{algorithm2e}
+
+\title{TIPE: Détection de Contours}
+\subtitle{Détection de mouvement}
+\author{Alban WAXIN n°39534}
+\date
+
+
+
+\newtcblisting{ocaml3}[1][]{
+  listing engine=minted,
+  colback=ocamlbg,
+  colframe=black!70,
+  listing only,
+  minted style=monokai,
+  minted language=Ocaml,
+  minted options={linenos=true,numbersep=3mm,texcl=true,#1},
+  left=5mm,enhanced,
+  overlay={\begin{tcbclipinterior}\fill[black!25] (frame.south west)
+            rectangle ([xshift=5mm]frame.north west);\end{tcbclipinterior}}
+}
+\definecolor{ocamlbg}{rgb}{0.25,0.25,0.25}
+
+\renewcommand*{\overrightarrow}[1]{\vbox{\halign{##\cr
+  \tiny\rightarrowfill\cr\noalign{\nointerlineskip\vskip1pt}
+  $#1\mskip2mu$\cr}}}
+
+\newcommand*{\Coordp}[4]{%
+  \ensuremath{{#1}\,
+    \left\lvert
+      \begin{matrix}
+        #2\\
+        #3\\
+        #4
+      \end{matrix}
+    \right.% Ne pas oublier le délimiteur invisible.
+  }}
+
+\newcommand{\divp}[2]
+	{
+	  \frac{\partial #1}{\partial #2}
+	}
+
+\newcommand{\divt}[2]
+	{
+	  \frac{d #1}{d #2}
+	}
+
+\newcommand{\divpsnd}[2]
+	{
+	  \frac{\partial^2 #1}{\partial #2^2}
+	}
+
+\newcommand{\divts}[2]
+	{
+	  \frac{d^2 #1}{d #2^2}
+	}
+
+\newcommand{\demos}[1]
+{
+\cy{\underline{\blz Démonstration: }#1}\vspace{0.5cm}
+}
+
+\newcommand{\props}[1]
+{
+ \begin{mybox}
+ \textbf{\rd{\underline{\blz Propriétés:} #1}}
+ \vspace{0.5cm}
+ \newline
+}
+
+\newcommand{\thetap}{\dot{\theta}}
+
+\newcommand{\rot}[1]
+{
+ \overrightarrow{rot}(\overrightarrow{#1})
+}
+
+\newcommand{\grad}[1]
+{
+ \overrightarrow{grad}(\overrightarrow{#1})
+}
+
+\newcommand{\lapl}[1]
+{
+ \Delta(\overrightarrow{#1})
+}
+
+\newcommand{\divs}[1]
+{
+ div(\overrightarrow{#1})
+}
+
+\newcommand{\prope}
+{
+ \end{mybox}
+}
+
+\newcommand{\defis}[1]
+{
+ \begin{mybox}
+ \textbf{\rd{\underline{\blz Définition:} #1}}
+ \vspace{0.5cm}
+ \newline
+}
+\newcommand{\defie}
+{
+ \end{mybox}
+}
+\newcommand{\discu}[1]
+{
+ \blue{\underline{\blz Discussion:} #1}
+}
+
+\newcommand{\vs}
+{
+ \vspace{0.25cm}
+}
+\newcommand{\ns}{\\ \indent \indent \vspace{0.15cm}}
+\newcommand{\MP}{\mathbb{P}}
+\newcommand{\bxt}[1]{\boxed{\text{#1}}}
+\newcommand{\rd}[1]{\textcolor{red}{#1}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\C}{\mathbb{C}}
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\Q}{\mathbb{Q}}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\K}{\mathbb{K}}
+\newcommand{\M}{\mathcal{M}}
+
+\newcommand{\abs}[1]{\left\lvert#1\right\rvert}
+\DeclarePairedDelimiter{\ceil}{\lceil}{\rceil}
+\newcommand{\fct}[5]
+	{
+	  \begin{array}{ccccc}
+		#1 & : & #2 & \to & #3 \\
+	    && #4 & \mapsto & #5 \\
+	  \end{array}
+	}
+
+\begin{document}
+\frame{\titlepage}
+
+\begin{frame}
+%\includegraphics{}
+\begin{block}
+{Problématique:} Comment identifier les contours d'un objet au sein d'un document image?
+\end{block}
+\end{frame}
+
+\begin{frame}
+\frametitle{Sommaire}
+\begin{columns}[t]
+  \begin{column}{7.5cm}
+  \tableofcontents[sections={1,2}]
+  \end{column}
+  \begin{column}{4.5cm}
+  \tableofcontents[sections={3}]
+  \end{column}
+  \end{columns}
+\setcounter{tocdepth}{2}
+\end{frame}
+
+\section{Introduction}
+\subsection{Définitions}
+
+\begin{frame}[fragile]
+\frametitle{Définitions}
+
+Cadre d'étude: Traitement des images visant à l'extraction de données significatives.
+
+\begin{itemize}
+
+\item \underline{Image:} matrice de taille n$\times$m (nombre de pixels en largeur et en longueur).
+
+\item \underline{Pixel:} unité de base de l'image codée par un entier entre 0 et $2^{24}$ ou un triplet d'entier(RGB) entre 0 et 255
+ représentant l'intensité lumineuse (réfléchie et émise par le corps).
+
+\item \underline{Contour/Bordure :} ligne séparant deux zones de contenu homogène connexes.
+\begin{figure}[h]
+    \begin{minipage}[c]{.46\linewidth}
+        \centering
+        \includegraphics[scale=0.5]{../../Downloads/TIPE (2)/contour brutal.jpg}
+        \caption{Contour en escalier}
+    \end{minipage}
+\end{figure}
+\end{itemize}
+\end{frame}
+
+\subsection{Photos d'étude}
+
+\begin{frame}
+\frametitle{Photos d'étude}
+\begin{figure}[h]
+    \begin{minipage}[c]{.46\linewidth}
+        \centering
+        \includegraphics[width=5cm,height=5cm,keepaspectratio]{../../Downloads/TIPE (2)/TIPE/cell.jpg}
+        \caption{Cell.jpg}
+    \end{minipage}
+    \hfill%
+    \begin{minipage}[c]{.46\linewidth}
+        \centering
+        \includegraphics[width=5cm,height=5cm,keepaspectratio]{../../Downloads/TIPE (2)/TIPE/Moon.jpg}
+        \caption{Moon.jpg}
+    \end{minipage}
+\end{figure}
+
+\hspace{2cm}
+
+\end{frame}
+
+\begin{frame}
+\section{Détection des contours}
+\begin{block}
+{ } \center Détection des contours
+\end{block}
+\end{frame}
+
+\subsection{Définition de contour dans le domaine continu ordre 1 et 2}
+\begin{frame}
+\frametitle{Définition de contour dans le domaine continu ordre 1}
+
+\underline{Contour :} point de haute variation des valeurs de la fonction image.
+
+\vspace{0.25cm}
+De part le caractère bidimensionnel des images on assimile la valeur d'un pixel à une fonction $\fct {I}{\R ^2}{\R}{(x,y)}{i}$.
+
+\begin{itemize}
+
+\item Ainsi les variations de l'image sont représentées par les maximas du gradient de la fonction $I$ , $\vec{\nabla} I= \divp{I(x,y)}{x} \vec{x} , \divp{I(x,y)}{y} \vec{y}$.
+\item Direction :
+$\vec{d} = \frac{\overrightarrow{\nabla f}}{||\overrightarrow{\nabla f}||}$.
+\item On a alors $\mathbb{P} = \lbrace(x,y) \in \R^2 | max\lbrace\vert\vert \nabla I \vert\vert. \vec{d}\rbrace\rbrace  $.
+\ns
+
+$\vert\vert \nabla I \vert\vert. \vec{d}$ que l'on notera aussi $\divp{I}{\vec{d}}$.
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Définition de contour dans le domaine continu ordre 2}
+Un maximum de variation est aussi atteint pour un passage à zéro de la dérivée seconde.
+\begin{itemize}
+
+\item <1-> Ce qui donne $\mathbb{P} = \lbrace(x,y) \in \Z^2 | \divpsnd{I}{\vec{d}} = 0 \rbrace  $.
+\item <2> Or par projection de $\vec{d}$ sur $\vec{x} $ et $\vec{y}$
+$\vec{d} = \cos\theta \vec{x} + \sin\theta \vec{y}$
+
+\vspace{0.15cm}
+Il suit par opérations sur les dérivées partielles:
+
+$\divp{I}{\vec{d}} = \divp{I}{x} \cos\theta + \divp{I}{y}\sin \theta$
+
+et ainsi par théorème de Schwartz:
+
+$\divpsnd{I}{\vec{d}} = \divpsnd{I}{x} \cos^2 \theta + 2 \frac{\partial^2 I}{\partial x \partial y} \cos\theta \sin \theta + \divpsnd{I}{y} \sin^2\theta$
+\item <3> Or par définition $\Delta I = \divpsnd{I}{x} +\divpsnd{I}{y}$ donc pour de faibles valeurs de $\theta$ on peut approximer $\divpsnd{I}{\vec{d}} = \Delta I$.
+\item <3-> D'où $\mathbb{P} = \lbrace(x,y) \in \Z^2 ; \Delta I = 0 \rbrace$.
+
+\end{itemize}
+\end{frame}
+
+\subsection{Modélisation applicable au modèle discret}
+\begin{frame}
+\frametitle{Modélisation applicable au modèle discret}
+Pour une mise en pratique efficace on utilise des applications linéaires $\fct{Tr}{(\Z^2)^k}{\Z}{x_0,...,x_k}{\sum_0^k a_i x_i} $
+
+\begin{itemize}
+\item  Soit $x_i$ pixels voisins du pixel courant, on applique une \underline{convolution (noté $*$)} d'un masque.
+
+\item Formule de convolution : $f * g$ = $\sum_{i=0}^k f(k-i)g(i)$.
+
+\item \includegraphics[scale=0.5]{../../Downloads/TIPE (2)/masquage.jpg}
+
+\item le pixel central devient après traitement $Tr(x5) = x_9 a_1 + x_8 a_2 + x_7 a_3 + x_6 a_4 + x_5 a_5 + x_4 a_6 +x_3 a_7 +x_2 a_8 +x_1 a_9$.
+\end{itemize}
+\end{frame}
+
+\subsection{Discrétisation et masques du Gradient}
+\begin{frame}
+\frametitle{Discrétisation et masque du Gradient}
+\begin{itemize}
+\item <1->Rappel $\vec{\nabla} I = \divp{I}{x} + \divp{I}{y}$.
+
+\item <1-> Par nature la fonction $I$ est $C^4$ d'où par Théorème de Taylor$-$Young on a en $a$:
+
+Soit $y \in R$.
+
+$\divp{I}{x}(x,y) = I(a,y) + \divp{I}{x}(a,y)(x-a) + \frac{\divpsnd{I}{x}(a,y)(x-a)^2}{2} + \frac{\frac{d^3I(x,y)}{dx^3}(a,y)(x-a)^3}{6} + O((x-a)^4)$.
+
+\item <2-> En posant $a = x$ on obtient(différentiabilité).
+
+$\divp{I}{x}(x+h,y) = I(x,y) + \divp{I}{x}(x,y)(h) + \frac{\divp{I}{x}(x,y)(h)^2}{2} + \frac{\frac{d^3I(x,y)}{dx^3}(x,y)(h)^3}{6} + O(h^4)$ (1)
+
+$\divp{I}{x}(x-h,y) = I(x,y) - \divp{I}{x}(x,y)(h) + \frac{\divp{I}{x}(x,y)(h)^2}{2} - \frac{\frac{d^3I(x,y)}{dx^3}(x,y)(h)^3}{6} + O(h^4)$ (2)
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Discrétisation et masque du Gradient}
+En combinant (1) et (2) on obtient 3 valeurs possibles de $\divp{I}{x}(x)$:
+
+\begin{itemize}
+
+\item Approximation droite : $\divp{I}{x}(x,y) = \frac{\divp{I}{x}(x+h,y)-\divp{I}{x}(x,y)}{h} + O(h)$ à partir de (1).
+
+\item Approximation gauche : $\divp{I}{x}(x,y) = \frac{\divp{I}{x}(x,y)-\divp{I}{x}(x,y)}{h} + O(h)$ à partir de (2).
+
+\item Approximation centrée : $\divp{I}{x}(x,y) = \frac{\divp{I}{x}(x+h,y)-
+\divp{I}{x}(x-h,y)}{2*h}$.
+
+
+\item Donc les masques Gradients selon les deux directions sont
+
+\begin{figure}[h]
+    \begin{minipage}[c]{.46\linewidth}
+        \centering
+        \includegraphics[scale=0.35]{../../Downloads/TIPE (2)/gradientx.jpg}
+        \caption{Masque Gradient x}
+    \end{minipage}
+    \hfill%
+    \begin{minipage}[c]{.46\linewidth}
+        \centering
+        \includegraphics[scale=0.35]{../../Downloads/TIPE (2)/gradienty.jpg}
+        \caption{Masque Gradient y}
+    \end{minipage}
+\end{figure}
+
+\end{itemize}
+\end{frame}
+
+
+\subsection{Discrétisation et masque du Laplacien}
+\begin{frame}
+\frametitle{Discrétisation et masque du Laplacien}
+\begin{itemize}
+\item <1->Rappel $\Delta I = \divpsnd{I}{x} + \divpsnd{I}{y}$.
+
+\item <1-> En réutilisant (1) et (2) on a:
+
+(1)+(2) $->$ $\divpsnd{I}{x}(x,y) = \frac{\divp{I}{x}(x+h,y)+\divp{I}{x}(x-h,y)-2\divp{I}{x}(x,y)}{h^2} + O(h^2)$.
+
+
+\item <2-> $\Delta I = \divpsnd{I}{x} + \divpsnd{I}{y}$
+
+$=I(x+1,y) -2I(x,y) + I(x-1,y) + I(x,y-1) -2I(x,y) + I(x,y+1) $
+
+$= I(x+1,y) + I(x-1,y) + I(x,y+1) - 4I(x,y) + I(x,y+1)$
+
+\item <3-> Donc le masque Laplacien est un masque $3 \times 3$.
+\begin{figure}
+\includegraphics[scale=0.75]{../../Downloads/TIPE (2)/laplacien4.jpg}
+\end{figure}
+\end{itemize}
+\end{frame}
+
+\subsection{Limites du masque Laplacien}
+
+\begin{frame}
+\frametitle{Limites du masque Laplacien}
+
+Le Laplacien souffre principalement de deux limites:
+
+\begin{enumerate}
+\item Une limite de courbure des contours
+\item Une hypersensibilité au bruit
+\end{enumerate}
+\end{frame}
+
+\begin{frame}
+\frametitle{Résolution 1 :}
+\begin{itemize}
+
+\item Prise en compte des contours diagonaux: rotation de $\frac{\pi}{4}$ du masque précédent.
+\begin{figure}
+\includegraphics[scale=0.45]{../../Downloads/TIPE (2)/laplacien4_2.jpg}
+\end{figure}
+
+\item Ainsi en les combinant on obtient:
+
+\begin{figure}
+\includegraphics[scale=0.75]{../../Downloads/TIPE (2)/laplacien8.jpg}
+\end{figure}
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Limites du masque Laplacien}
+
+Résolution du problème du bruit du Laplacien: dilatation .
+\begin{figure}
+\includegraphics[scale=0.25]{../../Downloads/TIPE (2)/flou.jpg}
+\end{figure}
+
+On remarque que le nouveau filtre défini précédemment effectue aussi ce genre d'opérations.
+
+\begin{figure}
+\includegraphics[scale=0.35]{../../Downloads/TIPE (2)/calcul.jpg}
+\end{figure}
+
+Ainsi on obtient que Contours = |Initial - Flou|.
+
+\end{frame}
+
+\subsection{Présentation masques usuels}
+\begin{frame}
+\frametitle{Présentation masques usuels}
+
+D'autres masques sont aussi utilisés pour le traitement des contours comme:
+
+
+\begin{itemize}
+\item Le filtre de Sobel:
+
+\includegraphics[scale=0.35]{../../Downloads/TIPE (2)/sobx.jpg} \includegraphics[scale=0.35]{../../Downloads/TIPE (2)/soby.jpg}
+
+\item Le filtre de Prewitt:
+
+\includegraphics[scale=0.35]{../../Downloads/TIPE (2)/prewitx.jpg} \includegraphics[scale=0.35]{../../Downloads/TIPE (2)/prewity.jpg}
+
+
+\item Le filtre de Kirsch:
+
+\includegraphics[scale=0.35]{../../Downloads/TIPE (2)/kirsch.jpg}
+
+\end{itemize}
+\end{frame}
+
+\subsection{Application}
+\begin{frame}[fragile]
+\frametitle{Application des filtres}
+
+Les filtres précédents approximant le gradient on s'intéresse au maximum de leur module dans les directions.
+
+Soit $It_x$ la matrice image après transformation selon l'axe x.
+
+On considère alors $It = \sqrt{It_x^2 + It_y^2}$
+\begin{center}
+    \scalebox{0.75}{
+
+    \begin{minipage}{\linewidth}
+\begin{algorithm}[H]
+\SetAlgoLined
+	\KwData{M(matrice image),F(matrice filtre)}
+	\KwResult{$It$ Matrice Traitée}
+	\BlankLine
+	$It \leftarrow$ MatriceVide()
+	\For{i (paire d'entier) $\in$ M.size}
+	{
+	 $It.(i) \leftarrow$ Convolution(Vois(i) F)
+	}
+
+\caption{Algorithme d'application des filtres}
+\end{algorithm}
+Avec Voisin(i) et Convolution deux primitives qui récupèrent le voisinage du pixel i et effectuent le produit de convolution.
+\end{minipage}%
+
+    }
+\end{center}
+\end{frame}
+
+\begin{frame}
+\frametitle{Résultats intermédiaires}
+\begin{center}
+\includegraphics[scale=5]{../../Downloads/TIPE (2)/TIPE/pixel.png} \includegraphics[scale=5]{../../Downloads/TIPE (2)/TIPE/sobx.png}
+\end{center}
+
+On doit alors échelonner les valeurs, on ajoute donc ce test à la boucle de l'algorithme précédent.
+\begin{center}
+    \scalebox{0.75}{
+
+    \begin{minipage}{\linewidth}
+\begin{algorithm}[H]
+\SetAlgoLined
+	 \If {$It.(i) < 0$} {$It.(i) <- 0$\;}
+	 \If {$It.(i) >16777215$} {$It.(i) <- 16777215$\;}
+
+\caption{Algorithme d'application des filtres}
+\end{algorithm}
+\end{minipage}%
+
+    }
+\end{center}
+
+\end{frame}
+
+\subsection{Seuillage}
+\begin{frame}[fragile]
+\frametitle{Seuillage}
+Pour éliminer une partie des pixels détectés comme contours mais non significatifs on peut appliquer un seuil.
+
+\begin{center}
+    \scalebox{0.75}{
+
+    \begin{minipage}{\linewidth}
+\begin{algorithm}[H]
+\SetAlgoLined
+	\KwData{M(matrice image),F(matrice filtre),X(seuil)}
+	\KwResult{$It$ (Matrice Traitée)}
+	\BlankLine
+	$It \leftarrow$ MatriceVide()
+	\For{i (paire d'entier) $\in$ M.size}
+	{
+	 \eIf {$It.(i) > X$} {$It.(i)<- 16777215$\;} {$It.(i)<- 0$}
+	}
+
+\caption{Algorithme de seuillage}
+\end{algorithm}
+\end{minipage}%
+
+    }
+\end{center}
+
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Seuillage}
+
+
+\begin{center}
+    \scalebox{0.75}{
+
+    \begin{minipage}{\linewidth}
+\begin{algorithm}[H]
+\SetAlgoLined
+	\KwData{M(matrice image),F(matrice filtre), H(seuil haut),D(seuil bas)}
+	\KwResult{$It$ Matrice Traitée}
+	\BlankLine
+	$It \leftarrow$ MatriceVide()
+	\For{i (paire d'entier) $\in$ M.size}
+	{
+	 \If {$It.(i) > H$} {$It.(i)<- 16777215$\;}
+	 \eIf {$It.(i) < B$} {$It.(i)<- 0$}
+	{\If {Voisinsup(i)}{$It.(i)<- 0$}
+	 \If {Voisininf(i)}{$It.(i)<- 16777215$}
+	}
+	}
+
+\caption{Algorithme de seuillage par Hystérésie}
+\end{algorithm}
+
+Avec Voisininf et Voisinsup deux primitives qui vérifient si un voisin est inférieur/supérieur à un des seuils.
+\end{minipage}%
+
+    }
+\end{center}
+\end{frame}
+
+\subsection{Résultats}
+\begin{frame}
+\frametitle{Quelques résultats:}
+
+Dilatation:
+
+\includegraphics[scale=0.2]{../../Downloads/TIPE (2)/TIPE/blur255.jpg}
+\includegraphics[scale=0.25]{../../Downloads/TIPE (2)/TIPE/Moon.jpg}
+
+\hspace{2.5 cm } Dilatée \hspace{4cm} Originale
+\end{frame}
+
+\begin{frame}
+\frametitle{Quelques résultats:}
+
+Sobel:
+
+\includegraphics[scale=0.2]{../../Downloads/TIPE (2)/TIPE/sobelnoseuil.png}
+\includegraphics[scale=0.2]{../../Downloads/TIPE (2)/TIPE/yessss59.png}
+
+\hspace{2.5 cm } Sobel non seuillé \hspace{4cm} Seuil fixe
+\end{frame}
+
+\begin{frame}
+\frametitle{Quelques résultats:}
+
+Laplacien:
+
+
+\begin{figure}
+        \centering
+        \includegraphics[scale=0.35]{../../Downloads/TIPE (2)/TIPE/cell_lap.jpg}
+        \caption{Laplacien}
+\end{figure}
+\end{frame}
+
+\begin{frame}
+\frametitle{Quelques résultats:}
+\begin{figure}[h]
+    \begin{minipage}[c]{.46\linewidth}
+        \centering
+        \includegraphics[scale=0.2]{../../Downloads/TIPE (2)/TIPE/cell_laph.jpg}
+        \caption{Seuillée par Hystérésie}
+    \end{minipage}
+    \hfill%
+    \begin{minipage}[c]{.46\linewidth}
+        \centering
+        \includegraphics[scale=0.2]{../../Downloads/TIPE (2)/TIPE/cell_lap_s1.jpg}
+        \caption{Seuillée manuellement}
+    \end{minipage}
+\end{figure}
+\end{frame}
+
+\begin{frame}
+\frametitle{Synthèse résultats}
+
+\center \includegraphics[scale=0.5]{../../Downloads/TIPE (2)/synthese.jpg}
+\end{frame}
+
+\begin{frame}
+\frametitle{Illustration Synthèse: Sobel}
+
+\begin{figure}[h]
+    \begin{minipage}[c]{.46\linewidth}
+        \centering
+        \includegraphics[scale=0.2]{../../Downloads/TIPE (2)/TIPE/flou1.png}
+        \caption{Bruit}
+    \end{minipage}
+    \hfill%
+    \begin{minipage}[c]{.46\linewidth}
+        \centering
+        \includegraphics[scale=0.2]{../../Downloads/TIPE (2)/TIPE/cell_sobel_70.png}
+        \caption{Contours épais}
+    \end{minipage}
+\end{figure}
+
+\end{frame}
+
+\begin{frame}
+\frametitle{Illustration Synthèse: Laplacien}
+
+\begin{figure}[h]
+    \begin{minipage}[c]{.46\linewidth}
+        \centering
+        \includegraphics[scale=0.2]{../../Downloads/TIPE (2)/TIPE/moon_lap.png}
+        \caption{Sursensibilité}
+    \end{minipage}
+    \hfill%
+    \begin{minipage}[c]{.46\linewidth}
+        \centering
+        \includegraphics[scale=0.2]{../../Downloads/TIPE (2)/TIPE/lap230.png}
+        \caption{Perte d'information par seuillage}
+    \end{minipage}
+\end{figure}
+
+\end{frame}
+
+\begin{frame}
+\frametitle{Une amélioration possible le lissage}
+
+\begin{figure}[h]
+    \begin{minipage}[c]{.46\linewidth}
+        \centering
+        \includegraphics[scale=0.2]{../../Downloads/TIPE (2)/TIPE/10cell_lap_2blur_s.jpg}
+        \caption{seuillage faible sur un double lissage moyen du Laplacien}
+    \end{minipage}
+    \hfill%
+    \begin{minipage}[c]{.46\linewidth}
+        \centering
+        \includegraphics[scale=0.2]{../../Downloads/TIPE (2)/TIPE/60cell_sobel_2blur.jpg}
+        \caption{Seuillage faible sur un double lissage moyen du sobel}
+    \end{minipage}
+\end{figure}
+\end{frame}
+
+
+\begin{frame}
+\section{Traitements des contours}
+
+\begin{block}
+{ } \center Traitements des contours
+\end{block}
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Présentation}
+Afin que les informations sur les contours soient utilisables ceux-ci doivent être fermés et fins.
+
+Les résultats fournis par le Laplacien donnent des contours fins mais ouverts.
+
+Une opération de chainage en quatre temps permet de corriger cela :
+
+\begin{enumerate}
+\item Création de chaines
+\item Filiation des chaines
+\item Élimination
+\item  Fusion
+\end{enumerate}
+\end{frame}
+
+\begin{frame}
+\frametitle {Image d'illustration du principe}
+\begin{figure}[h]
+    \begin{minipage}[c]{.46\linewidth}
+        \centering
+        \includegraphics[scale=0.2]{../../Downloads/TIPE (2)/Chainée1.png}
+        \caption{Image contour}
+    \end{minipage}
+    \hfill%
+    \begin{minipage}[c]{.46\linewidth}
+        \centering
+        \includegraphics[scale=0.2]{../../Downloads/TIPE (2)/Chainée.png}
+        \caption{Résultat du Chainage}
+    \end{minipage}
+\end{figure}
+\end{frame}
+
+\subsection{Préparatifs}
+
+\begin{frame}
+\frametitle{Préparatifs}
+
+Pour pouvoir mettre en place l'algorithme de chainage nous devons disposer de différentes informations au sein de classes.
+\begin{itemize}
+\item <1> les chaines seront composées de :
+\begin{itemize}
+\item une entête de classe entetes
+\item de maillons de classe list maillon
+\end{itemize}
+\item <2> les entêtes seront composées de:
+\begin{itemize}
+\item un indice de classe entier
+\item une tête de classe doublet d'entier
+\item une queue de classe doublet d'entier
+\item d'une famille de tête de classe liste d'entier et de char
+\item d'une famille de queue de classe liste d'entier et de char
+\end{itemize}
+
+\item <2>les maillons sont des doublets d'entiers.
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Préparatifs}
+
+On définit le voisinage d'un passé comme composé d' un passé d'un présent et d'un futur.
+\begin{center}
+\includegraphics[scale=0.45]{../../Downloads/TIPE (2)/format.jpg}
+\end{center}
+Une chaine est dite ouverte si l'on peut y rajouter des maillons sinon elle est fermée.
+
+Il y a jonction entre chaine s'il y a deux chaines ouvertes non connexes au pixel courant et  une future ou inversement.
+\end{frame}
+
+\subsection{Étape 1: Création}
+\begin{frame}
+\frametitle{Création}
+
+Pour pouvoir créer les chaines de contours on doit connaitre le nombre de chaines ouvertes/fermées dans le passé (NCO NCF) et le nombre de pixels contour dans le futur(NPF) du pixel courant.
+\end{frame}
+
+\begin{frame}[fragile]
+\begin{center}
+    \scalebox{0.7}{
+
+    \begin{minipage}{\linewidth}
+\begin{algorithm}[H]
+\SetAlgoLined
+	\KwData{M(matrice contour)}
+	\KwResult{$It$ Matrice Traitée}
+	\BlankLine
+	$It \leftarrow$ MatriceVide()
+	\For{i (paire d'entier) $\in$ M.size}
+	{
+	 NCO,NCF $\leftarrow$ CalculNCONCF(i) \;
+	 NPF $\leftarrow$ CalculNPF(i)\;
+	 \Case {NCO = 0}{Creerchaine(i)}
+	 \Case {NCO = 1}{Ajoutchaine(i,num)
+		\eIf {NCF >= 1}{FermeChaine(num)}{\If {NPF >= 2}{FermeChaine(num)}}}
+	 \Case {NCO = 2} {Ajoutchaine(i,num1)\; Fermechaine(num1)\;Fermechaine(num2)\;}
+	}
+	FermetureChaines\;
+
+\caption{Algorithme de création de chaines}
+\end{algorithm}
+\end{minipage}%
+
+    }
+\end{center}
+\end{frame}
+
+\begin{frame}
+\frametitle{Illustrations des cas}
+\begin{figure}[h]
+    \begin{minipage}[c]{.46\linewidth}
+        \centering
+        \includegraphics[scale=0.4]{../../Downloads/TIPE (2)/o_0nco.jpg}
+        \caption{Ouverture de chaine}
+    \end{minipage}
+    \hfill%
+    \begin{minipage}[c]{.46\linewidth}
+        \centering
+        \includegraphics[scale=0.4]{../../Downloads/TIPE (2)/f_2npf_1nco.jpg}
+        \caption{Ajout et Fermeture pour cause de 2 futures}
+    \end{minipage}
+	\hfill%
+    \begin{minipage}[c]{.46\linewidth}
+        \centering
+        \includegraphics[scale=0.35]{../../Downloads/TIPE (2)/f_1nco_1ncf.jpg}
+        \caption{Ajout et Fermeture pour cause de 1 passé ouvert et 1 passé fermé}
+    \end{minipage}
+\hfill%
+    \begin{minipage}[c]{.46\linewidth}
+        \centering
+        \includegraphics[scale=0.35]{../../Downloads/TIPE (2)/f_2nco.jpg}
+        \caption{Double Fermeture pour cause de deux passés ouverts}
+    \end{minipage}
+
+\end{figure}
+\end{frame}
+
+\begin{frame}
+\frametitle{Ajustement de l'efficacité}
+La méthode précédente de création de chaine n'est pas optimale car on considère une jonction dès qu'il y a deux chaines passées ouvertes or on ne considère que les chaines non connexes.
+
+
+
+Ainsi en posant le voisinage du pixel comme :
+
+\begin{center}
+\includegraphics[scale=0.5]{../../Downloads/TIPE (2)/format2.jpg}
+\end{center}
+
+
+\begin{center}
+    \scalebox{0.75}{
+
+    \begin{minipage}{\linewidth}
+\begin{algorithm}[H]
+\SetAlgoLined
+	\If {(Ouvert(P1) et Ouvert(P3)) ou (Ouvert(P3) et Ouvert(P4))}{}
+
+\caption{Ajustements}
+\end{algorithm}
+\end{minipage}%
+
+    }
+\end{center}
+\end{frame}
+\subsection{Étape 2 : Affiliation}
+\begin{frame}[fragile]
+\frametitle{Affiliation}
+
+Avant fusion des chaines il est nécessaire de les lier entre elles.
+
+2 méthodes:
+\begin{itemize}
+\item Filiation post-chainage
+\item Affiliation pendant le parcours grâce à une machine d'états
+
+On utilisera la première méthode avec l'algorithme suivant:
+\end{itemize}
+\begin{center}
+    \scalebox{0.75}{
+
+    \begin{minipage}{\linewidth}
+\begin{algorithm}[H]
+\SetAlgoLined
+	\KwData{Chainelist}
+	\KwResult{Chainelist (complétée avec les liens de filiation)}
+	\BlankLine
+	\For{i (chaine) $\in$ Chaineliste}
+	{
+	 filiationQueue(i,Chainelist)\;
+	 filiationTete(i,Chainelist)\;
+	}
+
+
+\caption{Algorithme de Filiation}
+\end{algorithm}
+\end{minipage}%
+
+    }
+\end{center}
+Avec filiationQueue(i,Chainelist) filiationTete(i,Chainelist) deux primitives détaillées ci-après.
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Affiliation}
+
+\begin{center}
+    \scalebox{0.75}{
+
+    \begin{minipage}{\linewidth}
+\begin{algorithm}[H]
+\SetAlgoLined
+	\KwData{Chaine}
+	\KwResult{Chaine (complétée avec les liens de filiation)}
+	\BlankLine
+	tete $\leftarrow$ Chaine.head \;
+	$v_t \leftarrow$ Passe(tete) \;
+	\For{i (pixel) $\in$ $v_t$}
+	{
+	 \If {i.chaine != Chaine}
+	 {
+	  \eIf {Estconnexe(i,$v_t$)}
+	  	{\If {Voisindirect(i,tete)}
+	  	{Ajoutlientete(Chaine,i.chaine, i.type)}
+	  	}{Ajoutlientete(Chaine,i.chaine, i.type)}}
+	}
+
+
+\caption{Algorithme de Filiation}
+\end{algorithm}
+\end{minipage}%
+
+    }
+\end{center}
+Avec Estconnexe renvoie si le pixel est connexe à un autre passé et Voisindirect qui renvoie si le pixel considéré est directement connexe au pixel courant.
+\end{frame}
+
+\subsection{Étape 4: Élimination}
+\begin{frame}[fragile]
+\frametitle{Élimination}
+On peut éliminer sur plusieurs points, on choisit la connectivité et la longueur.
+
+\begin{center}
+    \scalebox{0.5}{
+
+    \begin{minipage}{\linewidth}
+\begin{algorithm}[H]
+\SetAlgoLined
+	\KwData{ChaineList,seuil}
+	\KwResult{ChaineList (mise à jour)}
+	\BlankLine
+	\For{i (chaine) $\in$ ChaineList}
+	{
+	 \If {deconnectee(i) and (i.maillons).size > 0}{supprimer i}
+	 \If {(i.headlink).size = 0 and (i.taillink).size > 0 and Connection(i) and (i.maillons).size<seuil}{separer(i,i.taillink)\;reafilier(i.taillink)\;supprimer i}
+	 \If {(i.headlink).size > 0 and (i.taillink).size = 0 and Connection(i) and (i.maillons).size<seuil}{separer(i,i.headlink)\;reafilier(i.headlink)\;supprimer i}
+	 \If {Autoconnect(i) and( i.maillons).size<seuil }{separer(i,i.taillink)\;separer(i,i.headlink)\;reafilier(i.taillink)\;reafilier(i.headlink)\;supprimer i}
+	}
+
+
+\caption{Algorithme de Suppression}
+\end{algorithm}
+\end{minipage}%
+
+    }
+\end{center}
+
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Complexité}
+L'étape 1 de chaînage consiste en un balayage.
+
+Sur chaque pixel on effectue :
+\begin{itemize}
+\item test de significativité: 1
+\item test sur les passés:
+\begin{itemize}
+\item Type: 1
+\item Récupération chaine, tête et queue : 2
+\item État de la chaîne: 1
+
+\end{itemize}
+\item ajout à une chaine : 2
+\end{itemize}
+
+Cout total: 18 opérations * n $\times$ m
+
+L'étape 2 de filiation parcours les chaines.
+
+Sur chaque chaine(passé des extrémités) on effectue:
+\begin{itemize}
+\item vérification numéro de chaîne : 1
+\item test de connexité avec autre voisin : 4*2
+\item test de connexité direct au pixel courant : 1
+\item ajout du lien : 1
+\end{itemize}
+
+Cout total:(11*2)*2* nombre de chaine
+
+\end{frame}
+
+\begin{frame}
+
+\begin{figure}[h]
+    \begin{minipage}[c]{.46\linewidth}
+        \centering
+        \includegraphics[scale=0.2]{../../Downloads/TIPE (2)/Chainée1.png}
+        \caption{Image contour initial}
+    \end{minipage}
+    \hfill%
+    \begin{minipage}[c]{.46\linewidth}
+        \centering
+        \includegraphics[scale=0.2]{../../Downloads/TIPE (2)/chainnage.png}
+        \caption{Image contour avec chainage ajusté et fusionné}
+    \end{minipage}
+    \begin{minipage}[c]{.46\linewidth}
+        \centering
+        \includegraphics[scale=0.2]{../../Downloads/TIPE (2)/elimination.png}
+        \caption{Image avec chaines éliminées}
+    \end{minipage}
+    \hfill
+    \begin{minipage}[c]{.46\linewidth}
+        \centering
+        \includegraphics[scale=0.2]{../../Downloads/TIPE (2)/Chainée.png}
+        \caption{Image chainée}
+    \end{minipage}
+
+\end{figure}
+\end{frame}
+
+\section{Annexe}
+
+\begin{frame}[fragile]
+\frametitle{Annexe: Code détection de contours}
+\begin{figure}[h]
+    \begin{minipage}[c]{.46\linewidth}
+        \centering
+        \includegraphics[scale=0.55]{../../Downloads/TIPE (2)/image code/sccontour1.jpg}
+
+    \end{minipage}
+\end{figure}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Annexe: Code détection de contours}
+\begin{figure}[h]
+    \begin{minipage}[c]{.46\linewidth}
+        \centering
+        \includegraphics[scale=0.55]{../../Downloads/TIPE (2)/image code/sccontour2.jpg}
+
+    \end{minipage}
+\end{figure}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Annexe: Code détection de contours}
+\begin{figure}[h]
+    \begin{minipage}[c]{.46\linewidth}
+        \centering
+        \includegraphics[scale=0.55]{../../Downloads/TIPE (2)/image code/sccontour3.jpg}
+
+    \end{minipage}
+\end{figure}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Annexe: Code détection de contours}
+\begin{figure}[h]
+    \begin{minipage}[c]{.46\linewidth}
+        \centering
+        \includegraphics[scale=0.55]{../../Downloads/TIPE (2)/image code/sccontour4.jpg}
+
+    \end{minipage}
+\end{figure}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Annexe: Code détection de contours}
+\begin{figure}[h]
+    \begin{minipage}[c]{.46\linewidth}
+        \centering
+        \includegraphics[scale=0.55]{../../Downloads/TIPE (2)/image code/sccontour5.jpg}
+
+    \end{minipage}
+\end{figure}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Annexe: Code détection de contours}
+\begin{figure}[h]
+    \begin{minipage}[c]{.46\linewidth}
+        \centering
+        \includegraphics[scale=0.55]{../../Downloads/TIPE (2)/image code/sccontour6.jpg}
+
+    \end{minipage}
+\end{figure}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Annexe: Code détection de contours}
+\begin{figure}[h]
+    \begin{minipage}[c]{.46\linewidth}
+        \centering
+        \includegraphics[scale=0.45]{../../Downloads/TIPE (2)/image code/sccontour7.jpg}
+
+    \end{minipage}
+\end{figure}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Annexe: Code chaînage}
+\begin{figure}[h]
+    \begin{minipage}[c]{.46\linewidth}
+        \centering
+        \includegraphics[scale=0.45]{../../Downloads/TIPE (2)/image code/chainage1.jpg}
+
+    \end{minipage}
+\end{figure}
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Annexe: Code chaînage}
+\begin{figure}[h]
+    \begin{minipage}[c]{.46\linewidth}
+        \centering
+        \includegraphics[scale=0.45]{../../Downloads/TIPE (2)/image code/chainage2.jpg}
+
+    \end{minipage}
+\end{figure}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Annexe: Code chaînage}
+\begin{figure}[h]
+    \begin{minipage}[c]{.46\linewidth}
+        \centering
+        \includegraphics[scale=0.45]{../../Downloads/TIPE (2)/image code/chainage3.jpg}
+
+    \end{minipage}
+\end{figure}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Annexe: Code chaînage}
+\begin{figure}[h]
+    \begin{minipage}[c]{.46\linewidth}
+        \centering
+        \includegraphics[scale=0.45]{../../Downloads/TIPE (2)/image code/chainage4.jpg}
+
+    \end{minipage}
+\end{figure}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Annexe: Code chaînage}
+\begin{figure}[h]
+    \begin{minipage}[c]{.46\linewidth}
+        \centering
+        \includegraphics[scale=0.45]{../../Downloads/TIPE (2)/image code/chainage5.jpg}
+
+    \end{minipage}
+\end{figure}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Annexe: Code affiliation}
+\begin{figure}[h]
+    \begin{minipage}[c]{.46\linewidth}
+        \centering
+        \includegraphics[scale=0.45]{../../Downloads/TIPE (2)/image code/chainage6.jpg}
+
+    \end{minipage}
+\end{figure}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Annexe: Code affiliation}
+\begin{figure}[h]
+    \begin{minipage}[c]{.46\linewidth}
+        \centering
+        \includegraphics[scale=0.45]{../../Downloads/TIPE (2)/image code/chainage7.jpg}
+
+    \end{minipage}
+\end{figure}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Annexe: Code affiliation}
+\begin{figure}[h]
+    \begin{minipage}[c]{.46\linewidth}
+        \centering
+        \includegraphics[scale=0.45]{../../Downloads/TIPE (2)/image code/chainage8.jpg}
+
+    \end{minipage}
+\end{figure}
+\end{frame}
+
+
+\end{document}

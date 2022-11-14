@@ -1,0 +1,9 @@
+/**
+ * 
+ */
+/**
+ * @author waxin
+ *
+ */
+module test {
+}
