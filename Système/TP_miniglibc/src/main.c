@@ -19,8 +19,9 @@ int main (int argc, char ** argv){//zone de test des fonctions, les fonctions re
     mini_printf(str);
     mini_printf("\n");// force le retour a la ligne
     mini_printf("test");
-
-
+    mini_strlen("slt");
+    char* buffer_test = mini_calloc(sizeof(char),TEMP_BUFF_SIZE + 1);
+    mini_strcpy("les",buffer_test);
     //printf("%d\n",mini_scanf(str,10)); //test de la sortie du scanf   
 
 
@@ -33,7 +34,6 @@ int main (int argc, char ** argv){//zone de test des fonctions, les fonctions re
     /*k = */mini_fwrite("salut c'est moi qui décide comment on fait",sizeof(char),45,second_file);
     //printf("%d\n",k);
     /*k = */mini_fflush(second_file);
-
     MYFILE *third_file = mini_fopen("./putget.txt",'b');
     mini_fputc(third_file,'l');
     MYFILE *fourth_file = mini_fopen("./putget.txt", 'r');

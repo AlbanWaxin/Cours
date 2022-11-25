@@ -4,6 +4,7 @@
 #include "sys/types.h"
 #include "mini_lib.h" //notre librairie
 
+
 //Structure qui représente un bloc de mémoire alloué, sa taille et l'adresse du prochain bloc
 typedef struct malloc_element malloc_element; 
 struct malloc_element
@@ -99,9 +100,17 @@ void mini_free(void * ptr){
 /*
  Fonction de sortie globale
 */
-void mini_exit(){
+void mini_exit(){ 
     mini_exit_s();
     mini_exit_io();
+    malloc_element *element = malloc_list;
+    while (element != NULL)
+    {
+        if (element->statut == 1){
+            mini_free(element->block);
+        }
+        element = element->next_malloc;
+    } 
     _exit(0);
 }
 

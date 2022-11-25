@@ -6,6 +6,13 @@
 #define COMMANDSIZE 2048
 
 char *command;
+static void remplir_buffer_0(char* buffer, int size){
+    for (size_t i = 0; i < size; i++)
+    {
+        buffer[i] = '\0';
+    }
+    
+}
 
 static int first_word(char* buffer){
     int ind = 0;
@@ -51,31 +58,44 @@ int search_string(char* char1,char* char2){
     return -1;
 }
 
-/*
-static void command_exec(char* command,char* arg){
+static void remove_return_line(char* arg){
+    int ind = 0;
+    while ( arg[ind] != '\n' && arg[ind] != '\0')
+    {
+        ind++;   
+    }
+    if (arg[ind] == '\n'){
+        arg[ind] = '\0';
+    }
+    else
+    {
+        return;
+    }
+    return;
+}
+
+static void command_exec(char* command_name,char* command,char* arg,char * arg2){
     pid_t id_fils;
     int hold = 0;
-
+    //mini_printf(arg);
     id_fils = fork();
     if (id_fils ==-1)
     {
         mini_perror("Error fork:");
-        return -1;
+        return;
     }
     else if(id_fils==0){
-        if(execl(command,arg,NULL)==-1){
-            mini_perror("Commande non executee");
+        if(execl(command_name,command,arg,arg2,NULL)==-1){
+            mini_perror("Error exec");
         }
-        return -1;
+        return;
     }
     else{
-        //on est dans le processus parent
-        //on attend
         wait(&hold);
         return;
     } 
 }
-*/
+
 
 
 int main(int argc, char *argv[])
@@ -96,35 +116,63 @@ int main(int argc, char *argv[])
             fin =1;
         }
 
-        /*int ind = */first_word(buffer);
+        int ind = first_word(buffer);
         if (search_string(command,"mini_head")==1)
         {
             mini_printf("mini_head\n");
         }   
         else if (search_string(command,"mini_tail")==1)
         {
+            int ind2 = 0;
             mini_printf("mini_tail\n");
+            remplir_buffer_0(command,32);
+            ind += first_word(buffer+ind+1);
+            remplir_buffer_0(command,32);
+            ind += first_word(buffer+ind+2);
+            ind2 = ind;
+            remplir_buffer_0(command,32);
+            ind += first_word(buffer+ind+3);
+
+            command_exec("mini_tail","./mini_tail -n",(buffer+ind2+2),command);
         }
         else if (search_string(command,"mini_grep")==1)
         {
-            mini_printf("mini_grep\n");
+            //mini_printf("mini_grep\n");
+            remove_return_line(buffer+ind+1);
+            remplir_buffer_0(command,32);
+            ind += first_word(buffer+ind+1);
+            command_exec("mini_grep","./mini_grep",command,(buffer+ind+2));
         }
         else if (search_string(command,"mini_clean")==1)
         {
-            mini_printf("mini_clean\n");
+            //mini_printf("mini_clean\n");
+            remove_return_line(buffer+ind+1);
+            command_exec("mini_clean","./mini_clean",(buffer+ind+1),NULL);
+        }
+        else if (search_string(command,"mini_touch")==1)
+        {
+            //mini_printf("mini_touch\n");
+            remove_return_line(buffer+ind+1);
+            command_exec("mini_touch","./mini_touch",(buffer+ind+1),NULL);
         }
         else if (search_string(command,"mini_cat")==1)
         {
-            mini_printf("mini_cat\n");
-            //command_exec("./mini_cat",buffer+ind+1);
+            //mini_printf("mini_cat\n");
+            //execl("mini_cat","./mini_cat","../README.txt",NULL);
+            remove_return_line(buffer+ind+1);
+            command_exec("mini_cat","./mini_cat",(buffer+ind+1),NULL);
         }
         else if (search_string(command,"mini_echo")==1)
         {
-            mini_printf("mini_echo\n");
+            //mini_printf("mini_echo\n");
+            remove_return_line(buffer+ind+1);
+            command_exec("mini_echo","./mini_echo",(buffer+ind+1),NULL);
         }
         else if (search_string(command,"wc")==1)
         {
-            mini_printf("wc\n");
+            //mini_printf("wc\n");
+            remove_return_line(buffer+ind+1);
+            command_exec("wc","./wc",(buffer+ind+1),NULL);
         }
         else if (search_string(command,"exit")==1)
         {

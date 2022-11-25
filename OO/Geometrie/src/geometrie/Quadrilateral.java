@@ -5,7 +5,7 @@ package geometrie;
  * @author ceichler
  *
  */
-public class Quadrilateral {
+public class Quadrilateral extends GeometricalShape {
 
 	/** 
 	 * A quadrilateral has 4 segments.
@@ -37,8 +37,8 @@ public class Quadrilateral {
 	 */
 	public double getPerimeter() {
 		double perimeter = 0;
-		perimeter = theSegments[0].length() + theSegments[1].length() 
-				+  theSegments[2].length()  + theSegments[3].length() ;
+		perimeter = (this.getTheSegments())[0].length() + (this.getTheSegments())[1].length() 
+				+  (this.getTheSegments())[2].length()  + (this.getTheSegments())[3].length() ;
 		return perimeter;
 	}
 
@@ -58,20 +58,24 @@ public class Quadrilateral {
 	 * @param p3 third point of the quad
 	 * @param p4 pretty sure you can guess this one on your own
 	 */
-	public Quadrilateral(Point p1, Point p2, Point p3, Point p4){
+	public Quadrilateral(Point p1, Point p2, Point p3, Point p4,String couleur,String texture){
+		super(couleur,texture);
 		theSegments[0] = new Segment(p1,p2);
 		theSegments[1] = new Segment(p2,p3);
 		theSegments[2] = new Segment(p3,p4);
 		theSegments[3] = new Segment(p4,p1);
 		System.out.println("Quadrilateral");
 	}
+	public Quadrilateral() {
+		this(new Point(),new Point(),new Point(),new Point(),"blue","damier");
+	}
 
 
 	/**
 	 * Defaut constructor for quadrilateral
 	 */
-	public Quadrilateral(){
-		this(new Point(),new Point(),new Point(),new Point());
+	public Quadrilateral(String couleur,String texture){
+		this(new Point(),new Point(),new Point(),new Point(),couleur,texture);
 	}
 
 

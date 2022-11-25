@@ -37,6 +37,7 @@ make cleano		supprime les fichier .o
 make cleanprog		supprime les executables
 
 
-A noter que le mini_shell compile ,se lance mais les fonctions ne sont pas executer car je n'ai pas réussi a faire fonctioner la fonction command_exec qui est en commentaire.Elles sont néanmoins détectées. 
+A noter pour tester le grep mettre au moins deux ligne (meme une 2eme ligne vide suffit)
+Seules head et tail et cp ne sont pas appelables dans le mini_shell pour probleme de gestion d'argument
 
 au moment du dépot les fonctions compilent toutes sans erreur ou warning.

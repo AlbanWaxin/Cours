@@ -1,0 +1,389 @@
+\documentclass[12pt]{report}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[fleqn]{amsmath}
+\usepackage{amsfonts,amssymb,stmaryrd}
+\usepackage[english]{babel}
+\usepackage{pdfpages}
+
+%=============Affichage=======================
+\usepackage{fullpage}
+\usepackage{mathtools}
+\usepackage{lmodern}
+\usepackage{xcolor}
+\usepackage{enumitem}
+\usepackage{tikz,tkz-tab}
+\usepackage[ruled,vlined]{algorithm2e}
+\title{TD Statistiques 3A STI}
+\author{Waxin Alban}
+
+\definecolor{almond}{rgb}{0.94, 0.87, 0.8}
+\definecolor{champagne}{rgb}{0.97, 0.91, 0.81}
+\definecolor{dgreen}{rgb}{0.0, 0.5, 0.0}
+\definecolor{bc}{rgb}{0.8588, 0.8980, 0.9450}
+
+\setlength{\topmargin}{-1.5cm}
+\setlength{\textheight}{25cm}
+\setlength{\textwidth}{16cm}
+\setlength{\oddsidemargin}{-1.5cm}
+\setlength{\evensidemargin}{50cm}
+
+\newcommand{\rd}[1]{\textcolor{red}{#1}}
+\newcommand{\g}[1]{\textcolor{lime}{#1}}
+\newcommand{\dg}[1]{\textcolor{dgreen}{#1}}
+\newcommand{\blue}[1]{\textcolor{blue}{#1}}
+\newcommand{\cy}[1]{\textcolor{cyan}{#1}}
+\newcommand{\blz}{$\blacklozenge$}
+\newcommand{\ns}{\\\indent\indent\vspace{0.25cm}}
+\setcounter{secnumdepth}{5}% profondeur de la table des matières
+\usepackage{titlesec}
+
+
+\titleformat{\chapter}[frame]
+{\Huge}
+{\filright\rmfamily\bfseries\Huge\enspace\thechapter\enspace}
+{18pt}
+{\rmfamily\huge\bfseries\filcenter}
+% rmfamily=roman, sffamily = sans serif ou ttfamily =type writer
+\usepackage[many]{tcolorbox} % Creation de box collorable pour le texte non intégré
+\newtcolorbox{mybox}{colback=bc,
+colframe=black,arc=0mm,sharp corners= northwest,arc=10pt}
+
+\newtcolorbox{demo}{colback=almond,
+colframe=black,arc=0mm,sharp corners= northeast,arc=10pt}
+
+\renewcommand*{\overrightarrow}[1]{\vbox{\halign{##\cr
+ \tiny\rightarrowfill\cr\noalign{\nointerlineskip\vskip1pt}
+ $#1\mskip2mu$\cr}}}
+
+\newcommand{\rem}[1]
+{
+\subparagraph*{\underline{Remarque:#1}}\mbox{}\\
+}
+
+\newcommand{\props}[1]
+{
+\begin{mybox}
+\textbf{\rd{\underline{\blz Propriété:} #1}}
+\vspace{0.5cm}
+\newline
+}
+
+\newcommand{\prope}
+{
+\end{mybox}
+}
+
+\newcommand{\scal}[2]
+{
+<#1|#2>
+}
+
+\newcommand{\defis}[1]
+{
+\begin{mybox}
+\textbf{\rd{\underline{\blz Définition:} #1}}
+\vspace{0.5cm}
+\newline
+}
+\newcommand{\defie}
+{
+\end{mybox}
+}
+\newcommand{\demos}[1]
+{
+\begin{demo}
+\textbf{\underline{\blz Démonstration:} #1}
+\newline
+}
+\newcommand{\demoe}
+{
+\end{demo}
+}
+\newcommand{\exe}[1]
+{
+\subparagraph*{\underline{Exemple:#1}}\mbox{}\\
+}
+
+\newcommand{\vs}
+{
+\vspace{0.25cm}
+}
+
+\newcommand{\thms}[1]
+{
+\begin{mybox}
+\textbf{\rd{\underline{\blz Théorème:} #1}}
+\vspace{0.5cm}
+\newline
+}
+
+\newcommand{\thme}
+{
+\end{mybox}
+}
+
+\newcommand{\coros}[1]
+{
+\begin{mybox}
+\textbf{\rd{\underline{\blz Corolaire:} #1}}
+\vspace{0.5cm}
+\newline
+}
+
+\newcommand{\coroe}
+{
+\end{mybox}
+}
+
+\newcommand{\lems}[1]
+{
+\begin{mybox}
+\textbf{\rd{\underline{\blz Lemme:} #1}}
+\vspace{0.5cm}
+\newline
+}
+
+\newcommand{\leme}
+{
+\end{mybox}
+}
+%=============================================
+
+%\usepackage[cm]{aeguill}
+
+%=============Mathématiques=================
+
+%--------------Raccourcis:------------------
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\C}{\mathbb{C}}
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\Q}{\mathbb{Q}}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\K}{\mathbb{K}}
+\newcommand{\M}{\mathcal{M}}
+\newcommand{\nint}[1]{#1 \in \N}
+\newcommand{\zint}[1]{#1 \in \N^*}
+\newcommand{\limi}[1]{\underset{#1 \to \infty}{lim}}
+\newcommand{\limn}[2]{\underset{#1 \to #2}{lim}}
+\newcommand{\x}{\times}
+\newcommand{\un}[1]{u_{#1}}
+\newcommand{\uns}{(u_n)_\nint{n}}
+\newcommand{\Sn}[1]{S_{#1}}
+\newcommand{\Sns}{(S_n)_\nint{n}}
+\newcommand{\ol}[1]{\overline{#1}}
+\newcommand{\znz}{\Z/n\Z}
+\renewcommand{\o}{\circ}
+
+\newcommand{\seriegu}{\sum u_n}
+\newcommand{\seriegv}{\sum v_n}
+\newcommand{\harmonique}{\sum \frac{1}{n}}
+\newcommand{\SRieman}{\sum \frac{1}{n^\alpha}}
+\newcommand{\serie}[3]{\sum_{#1}^{#2}{#3}}
+\newcommand{\satps}{série à terme positif}
+\newcommand{\satp}{séries à termes positifs}
+\newcommand{\pl}[1]{\mathbb{#1}[X]}
+\newcommand{\som}[2]{\sum\limits_{#1}^{#2}}
+
+
+\newcommand{\abs}[1]{\left\lvert#1\right\rvert}
+\DeclarePairedDelimiter{\ceil}{\lceil}{\rceil}
+
+%Format de fonctions:
+\newcommand{\fct}[5]
+	{
+	  \begin{array}{ccccc}
+		#1 & : & #2 & \to & #3 \\
+	    && #4 & \mapsto & #5 \\
+	  \end{array}
+	}
+\newcommand{\dfct}[2] {#1 \mapsto #2}
+
+\renewcommand{\abs}[1]{|#1|}
+\newcommand{\nm}[2]{ ||#1||_{#2} }
+%===================TESTS===================
+
+\begin{document}
+\chapter{Rappels de probabilités}
+\section{Exercice 1}
+\section{Exercice 2}
+\section{Exercice 3}
+\section{Exercice 4}
+\normalsize
+\begin{enumerate}
+    \item On tire un homme, donc \\
+        $P_H(F) = \frac{P(H \cap F)}{P(H)} = \frac{\frac{Card(F\cap H)}{Card(\Omega)}}{\frac{Card(H)}{Card(\Omega)}}$ \\
+        $= \frac{420}{700} = \frac{21}{35}$
+    \item $P_F(H) = \frac{420}{495}$
+    \item $P(H) = \frac{700}{1000}$
+    \item $P(F) = \frac{495}{1000}$
+    \item $P(H \cap F) = \frac{420}{1000}$
+    \item $P(H \cap F) = P(H)P(F)$?\\
+    $P(H\cap F) = \frac{420}{1000}$    |   $P(H)P(f)= \frac{7\times495}{10 \times 1000} \neq \frac{420}{1000}$\\
+    Donc H et F non indépendants
+    \item 
+\end{enumerate}
+
+\section{Exercice 5}
+
+Rappel de tous les paramètres:\\
+\begin{itemize}
+    \item  A pièce venant du fournisseur A
+    \item B pièce venant du fournisseur B
+    \item D Défectueuse
+\end{itemize}
+$P(A) = 75 \% \Rightarrow P(B) = 1 - P(A) = 25\%$\\
+$P_A(D) = 1 \% \Rightarrow P_A(\overline{D}) = 99 \%$\\
+$P_B(D) = 2 \% \Rightarrow P_B(\overline{D}) = 98 \%$\\
+
+
+\begin{enumerate}
+    \item 
+    \begin{align*}
+        P_{\overline{D}}(A) &= \frac{P_{A}(\overline{D})P(A)}{P_A(\overline{D})P(A)+ P_{\overline{A}}(\overline{D})P(\overline{A})}\\
+        &= \frac{99 \% 75 \%}{99 \% 75\% + 98 \% 25\%}\\
+        &= 0.752    
+    \end{align*}
+    \item 
+    \begin{align*}
+        P_{D}(B) &=  \frac{P_{B}(D)P(B)}{P_B(D)P(B)+ P_{A}(D)P(A)}\\
+        &= \frac{25 \% 2 \%}{25\% 2\% + 75\% 1\%} \\
+        &= 0.4  
+    \end{align*} 
+    Donc $P_D(A) = 60 \% > P_D(B)$
+\end{enumerate}
+
+\section{}
+\section{}
+\section{}
+\section{Exercice 9}
+\begin{enumerate}
+    \item 
+    \begin{itemize}
+        \item Loi de X:\\
+        $X(\Omega) = \{ -1,1 \}$\\
+        $P(X=-1) = P(X=-1, Y = -1) + P(X=-1, Y = 1)+ P(X=-1, Y=2) = \frac{3}{8}$\\
+        $P(X=1) = \frac{1}{8}+ \frac{1}{8} +\frac{3}{8} = \frac{5}{8}$\\
+        \item Loi de Y:\\
+        $Y(\Omega) = \{ -1,1,2 \}$\\
+        $P(Y = -1) = \frac{3}{8}$\\
+        $P(Y = 1) = \frac{1}{8}$\\
+        $P(Y = 2) = \frac{4}{8}$\\
+        \item $E(X) = \sum_k k P(X=k) = -\frac{3}{8} + \frac{5}{8} = \frac{1}{4}$
+        \item $E(Y) = \frac{3}{4}$
+    \end{itemize}
+    \item $cov(X,Y) = E(XY) - E(X)E(Y)$\\
+    $XY(\Omega) = \{ -1,1,2,-2 \}$
+    $E(XY) = \frac{1}{4} \times 1 + 0 \times -1 + \frac{1}{8} \times -2 + \frac{1}{8} \times (-1) + \frac{1}{8} + \frac{3}{8} \times 2 = \frac{3}{4}$\\
+    $cov(X,Y) = \frac{3}{4} - \frac{3}{16} = \frac{9}{16} \neq 0$\\
+    $cov(X,Y)$ non nul donc les variables ne sont pas indépendantes
+    \item $P_{Y=-1}(X = -1) = \frac{P(X=-1,Y=-1)}{P(Y=-1)} = 2/3$\\    
+    $P_{Y=-1}(X = 1) = \frac{P(X=1,Y=-1)}{P(Y=-1)} = 1/3$\\  
+    \item \begin{align*}
+        Var(X) &= E(X^2) - E(X)^2\\
+        &= \sum k P(X^2=k)\\
+        &= \sum k^2 P(X = k)\\
+        &= \frac{3}{8} + \frac{5}{8} =1
+    \end{align*}
+\end{enumerate}
+
+\section{ Exercice 13}
+$f(x) = \begin{cases}
+    5 (1-x)^4 , 0<x<1\\
+    0,x>1
+\end{cases}$\\
+$Var(X) = E(X^2) - E(X)^2$\\
+Soit X une variable aléatoire
+X: demande d'essence en milliers de litres/semaine à cours d'essence ssi $X>V_0$\\
+On veut 
+\begin{align*}
+    P(X> V_0) < 0,01 & \leftrightarrow \int_{V_0}^{\infty} f(x)dx < 0,01\\
+    & \leftrightarrow \int_{V_0}^1 5(1-x)^4 dx < 0,01\\
+    & \leftrightarrow [(x-1)^5]^1_{V_0} < 0,01\\
+    & \leftrightarrow - (V_0 -1)^5 < 0,01\\
+    & \leftrightarrow 1-V_0 < 0,01^{\frac{1}{5}}\\
+    & \leftrightarrow  V_0 >  1- 0,01^{\frac{1}{5}}
+\end{align*}
+
+\chapter{Principales lois de probabilités}
+\section{Exercice 1}
+Soit X une variable aléatoire telle que $X \sim \mathcal{N}(160,30)$
+\begin{enumerate}
+    \item il ne s'agit pas en réalité de la durée de vie d'un tube mais plutot la moyenne d'un lot de tube.\\
+    On le voit au fait que X suive une loi normale et non une loi exponentielle.
+    \item 
+        \begin{itemize}
+            \item $P(X \leq  140)$:\\
+            Si $X \sim \mathcal{N}(160;30)$ alors $\frac{X-160}{30} \sim \mathcal{N}(0;1)$\\
+            \begin{align*}
+                P(X \leq  140) &= P(\frac{X-160}{30} \leq \frac{140-160}{30})\\
+                &= P(\frac{X-160}{30} \leq -0,67)
+                & \text{Lecture dans la table $P(X \leq 0,67) = 0,7486$}\\
+                &= P(\frac{X-160}{30} \geq 0,67)\\
+                &= 1 - P(\frac{X-160}{30} < 0,67)\\
+                &= 1- 0,7486\\
+                &=0,2514\\
+                & = 25,14%
+            \end{align*}
+            \item $P(X \geq 200)$:\\
+            Si $X \sim \mathcal{N}(160;30)$ alors $\frac{X-160}{30} \sim \mathcal{N}(0;1)$\\
+            \begin{align*}
+                P(X \geq 200 ) &= P(\frac{X-160}{30} \geq \frac{200-160}{30})\\
+                &= P(\frac{X-160}{30} \geq 1,33)
+                & \text{Lecture dans la table $P(X < 0,133) = 0,9082$}\\
+                &= P(\frac{X-160}{30} < 1,33)\\
+                &= 1 - P(\frac{X-160}{30} < 1,33)\\
+                &= 1- 0,9082\\
+                &=0,0918\\
+                & = 9,18%
+            \end{align*}
+            \item $P(130 \leq X \leq 190)$:\\
+            Si $X \sim \mathcal{N}(160;30)$ alors $\frac{X-160}{30} \sim \mathcal{N}(0;1)$\\
+            \begin{align*}
+                P(X \leq 190) - P(X < 130) &= P(\frac{X-160}{30} \leq \frac{190-160}{30}) - P(\frac{X-160}{30} < \frac{130-160}{30}) \\
+                &= P(\frac{X-160}{30} \leq 1) - P(\frac{X-160}{30} <-1)\\
+                & \text{Lecture dans la table}
+                &= P(\frac{X-160}{30} \leq 1) - (1- P(\frac{X-160}{30} \leq 1))\\
+                &= 2 \times P(\frac{X-160}{30} \leq 1) -1\\
+                &=0,6826\\
+                & = 68,26%
+            \end{align*}
+        \end{itemize} 
+    \item\begin{align*}
+        P(X \leq a) =  0,9 &\leftrightarrow P(\frac{X-160}{30} \leq \frac{a-160}{30}) =0,9\\
+        &\leftrightarrow  \frac{a-160}{30}  = 1,28
+        &\leftrightarrow a = 198,4
+    \end{align*}
+    \item \begin{align*}
+        P(X \geq b) = 0.8  &\leftrightarrow P(\frac{X-160}{30} \geq \frac{b-160}{30}) =0,8\\
+        &\leftrightarrow 1 - P(\frac{X-160}{30} \leq \frac{b-160}{30}) = 0.8\\
+        &\leftrightarrow P(\frac{X-160}{30} \leq \frac{b-160}{30}) = 0.2\\
+        &\leftrightarrow 1 - P(\frac{X-160}{30} \leq -\frac{b-160}{30}) = 0.2\\
+        &\leftrightarrow P(\frac{X-160}{30} \leq -\frac{b-160}{30}) = 0.8\\
+        &\leftrightarrow  \frac{160-b}{30}  = 0,84\\
+        &\leftrightarrow b = 134,8
+    \end{align*}
+    \item \begin{align*}
+        P(X >200 | X>160) &= \frac{P(X>200) \cap P(X>160)}{P(X>160)}\\
+        &= \frac{P(X > 200)}{P(X > 160)}\\
+        &= 18,36%
+    \end{align*}
+\end{enumerate}
+
+\section{Exercice 2}
+
+$X \sim \mathcal{B}(400;0,1)$\\
+$n = 400 \geq 30$\\
+$np = 40 \geq 5$\\
+$n(1-p) = 360 \geq 5$\\
+$X \sim \mathcal{N}(40;\sqrt{40\times 0,9})$ 
+
+\chapter{Annexe}
+
+\begin{tabular}{l|c|c|c|c|c|c|c|c|c|c}
+    \hline
+    x & 0,00 & 0,01 & 0,02 & 0,03 & 0,04 & 0,05 & 0,06 & 0,07 & 0,08 & 0,09\\ 
+    \hline 
+    0,0
+\end{tabular}
+\end{document}
