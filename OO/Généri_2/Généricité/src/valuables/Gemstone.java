@@ -9,7 +9,7 @@ import safes.GenericSafe;
  * @version 1.0
  *
  */
-public abstract class Gemstone implements Valuable {
+public abstract class Gemstone implements Valuable,Storable<GenericSafe<Gemstone>>{
 
 	/**
 	 * Value of the gemstone
@@ -56,7 +56,7 @@ public abstract class Gemstone implements Valuable {
 	/**
 	 * Safe containing the gem
 	 */
-	private GenericSafe mySafe = null;
+	private GenericSafe<Gemstone> mySafe = null;
 
 	/**
 	 * Getter of the property <tt>mySafe</tt>
@@ -64,7 +64,7 @@ public abstract class Gemstone implements Valuable {
 	 * @return Returns the mySafe.
 	 * @uml.property name="mySafe"
 	 */
-	public GenericSafe getMySafe() {
+	public GenericSafe<Gemstone> getMyContainer() {
 		return mySafe;
 	}
 
@@ -74,7 +74,7 @@ public abstract class Gemstone implements Valuable {
 	 * @param monSafe The monSafe to set.
 	 * @uml.property name="monSafe"
 	 */
-	public void setMySafe(GenericSafe mySafe) {
+	public void setMyContainer(GenericSafe<Gemstone> mySafe) {
 		this.mySafe = mySafe;
 	}
 

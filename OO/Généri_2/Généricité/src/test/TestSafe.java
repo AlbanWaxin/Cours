@@ -21,10 +21,10 @@ public class TestSafe {
 		// System.setErr(System.out);
 
 		// Let's create a safe with a capacity of 2 gems
-		GenericSafe mySafe;
-		mySafe = new SafeWithCode(2, 2345);
+		GenericSafe<Gemstone> mySafe;
+		mySafe = new GenericSafeWithCode<>(2, 2345);
 		mySafe.close();
-		((SafeWithCode) mySafe).open(2345);
+		((GenericSafeWithCode<Gemstone>) mySafe).open(2345);
 		System.out.println(mySafe.isOpened());
 
 		Gemstone g = new Emerald(6);
@@ -33,10 +33,11 @@ public class TestSafe {
 		Gemstone g2 = new Diamond(2);
 		g2.expertize();
 		System.out.println(g2.getValue());
-		mySafe.addGem(g);
+		mySafe.addObject(g);
 
 		System.out.println(g2);
-
+		GenericSafe<GenericSafe<Gemstone>> gsg = new GenericSafe<GenericSafe<Gemstone>>(5);
+		GenericSafe<GenericSafe<Gemstone>> ggg = new GenericSafe<GenericSafe<Gemstone>>(2);
 	}
 
 }

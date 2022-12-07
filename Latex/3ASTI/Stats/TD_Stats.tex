@@ -14,6 +14,8 @@
 \usepackage{enumitem}
 \usepackage{tikz,tkz-tab}
 \usepackage[ruled,vlined]{algorithm2e}
+\usepackage{booktabs}
+  \usepackage{setspace}
 \title{TD Statistiques 3A STI}
 \author{Waxin Alban}
 
@@ -27,6 +29,7 @@
 \setlength{\textwidth}{16cm}
 \setlength{\oddsidemargin}{-1.5cm}
 \setlength{\evensidemargin}{50cm}
+\doublespacing  
 
 \newcommand{\rd}[1]{\textcolor{red}{#1}}
 \newcommand{\g}[1]{\textcolor{lime}{#1}}
@@ -376,14 +379,206 @@ $X \sim \mathcal{B}(400;0,1)$\\
 $n = 400 \geq 30$\\
 $np = 40 \geq 5$\\
 $n(1-p) = 360 \geq 5$\\
-$X \sim \mathcal{N}(40;\sqrt{40\times 0,9})$ 
+$X \sim \mathcal{N}(40;\sqrt{40\times 0,9})$\\
+$P(X\leq 30) = 0,0524 = 5,24\% avec B(400;0,1)$\\
+\begin{align*}
+    P(X \leq 30) &= P( \frac{X-40}{6} \leq \frac{30-40}{6})\\
+    &= P(\frac{X-40}{6}\leq  -1,67)\\
+    &= 1 - P(\frac{X-40}{6} \leq 1,67)\\
+    &= 1-0,9525\\
+    &=4,75\%   
+\end{align*}
 
-\chapter{Annexe}
+Correction de continuité
 
-\begin{tabular}{l|c|c|c|c|c|c|c|c|c|c}
+\begin{align*}
+    P(x \leq 30) &= P(X=0) + P(X=1) + \dots + P(X =30)\\
+    &= P( -0.5 \leq X \leq 0.5) + P( 0.5 \leq X \leq 1.5) + \dots + P( 29.5 \leq X \leq 30.5)\\
+    &= P(-0.5 \leq X \leq 30.5)\\
+    &\simeq P(X \leq 30.5)\\
+    & = P(\frac{X-40}{6} \leq \frac{30,5-40}{6})\\
+    & = P(\frac{X-40}{6} \leq -1,58)\\
+    & = 1- P(\frac{X-40}{6} \leq 1,58)\\
+    & = 5.71\%
+\end{align*}
+ 
+\chapter{Echantillonnage et Estimation}
+
+\section{Exercice 1}
+
+Pas le cas 1: car l'écart-type de la population n'est pas connu, on connait seulement l'écart-type de l'échantillon\\
+Pas le cas 3: car l'échantillon est de taille supérieure à 30\\
+Donc cas 2\\
+
+L'intervalle de confianc est alors 
+\begin{align*}
+    I &= [\overline{x_e} - t_\alpha \frac{S_e}{\sqrt{n}}; \overline{x_e} + t_\alpha \frac{S_e}{\sqrt{n}}]\\
+    &= [\overline{x_e} - t_\alpha \frac{\sigma_e}{\sqrt{n}}; \overline{x_e} + t_\alpha \frac{\sigma_e}{\sqrt{n-1}}]
+\end{align*}
+
+$\overline{x_e} = 3000$\\
+$\sigma_e = 20$\\
+$n = 49$\\
+$1-\alpha \to t_\alpha = 1,645$\\
+$I = [2995,25;3004,75]$
+
+\section{Exercice 2}
+La variance est connue $\sigma^2 = 0,12^2$ et la population est normale  donc c'est le cas 1\\
+$I= [\overline{x_e} - t_\alpha \frac{\sigma}{\sqrt{n}}; \overline{x_e} + t_\alpha \frac{\sigma}{\sqrt{n}}]$\\
+Longueur de $I = 2 t_\alpha \frac{\sigma}{\sqrt{n}}$\\
+$\sigma = 0,12$\\
+$t_\alpha = 2,576$ car $1-\alpha = 99 \%$\\
+On veut 
+\begin{align*}
+    2 t_\alpha \frac{\sigma}{\sqrt{n}} \leq 6 10^2 &\Leftrightarrow \sqrt{n} \geq \frac{2 \times 2,576 \times 0,12}{0,06} = 10,3\\
+    &\Leftrightarrow n \geq 106,09\\
+    &\Leftrightarrow n = 107
+\end{align*}
+
+\section{Exercice 3}
+Ici $p_e = \frac{15}{125}$ et $n = 125$\\
+$np_e=15 \geq 5$\\
+$n(1-p_e) = 110 \geq 5$\\
+$I= [p_e - t_\alpha \frac{p_e(1-p_e)}{\sqrt{n}}; p_e + t_\alpha \frac{p_e(1-p_e)}{\sqrt{n}}]$\\
+avec $\mathbb{N}(0;1) tableau p37 1-\alpha = 95 \%, t_\alpha = 1,96$\\
+$I=[6,3\%,17,7\%]$\\
+
+\section{Exercice 4}
+On suppose que la population est normale, c'est à dire que le temps d'utilisation en minutes suit une loi normale\\
+La variance est inconnue et l'échantillon est petit donc il s'agit d'un cas 3
+\begin{align*}
+    I &= [\overline{x_e} - t_\alpha \frac{S_e}{\sqrt{n}}; \overline{x_e} + t_\alpha \frac{S_e}{\sqrt{n}}]\\
+    &= [\overline{x_e} - t_\alpha \frac{\sigma_e}{\sqrt{n}}; \overline{x_e} + t_\alpha \frac{\sigma_e}{\sqrt{n-1}}]
+\end{align*}
+
+$\overline{x_e},\sigma_e$ et $t_{\alpha,n-1}$ à calculer  
+loi de Student à partir de $1-\alpha = 99 \%$\\
+$\overline{x_e} =26,8$\\
+\begin{align*}
+    \sigma_e^2 &= \overline{x_e^2} - \overline{x_e}^2\\
+    &= 724,23 - 718,24\\
+    &=6\\
+\end{align*}
+
+$t_{\alpha,n-1} = t_{\alpha,8} = 3,355$ par lecture de la table de Student\\
+$I = [23,9;29,7]$
+
+\section{Exercice 5}
+
+Il y a 400 mesures donc n>30, on peut donc supposer que $\overline{X} \sim \mathcal{N}$\\
+L'écart type de l'échantillon est inconnue\\
+L'échantillon est assez grand il s'agit donc d'un cas 2\\
+Donc $\frac{(\overline{X}-m)\sqrt{n}}{\hat{S}} \sim \mathcal{N}(0,1)$\\
+$\overline{X} \sim \mathcal{N}(m,\frac{s_e}{\sqrt{n}})$\\
+Donc approximativement $\overline{X} \sim \mathcal{N}(64;\frac{8}{\sqrt{400}}) = \mathcal{N}(64;0,4)$\\
+
+\begin{itemize}
+    \item $1- \alpha = 50\%$ \\
+    $I=[\overline{x_e} - t_\alpha \frac{s_e}{\sqrt{n}};\overline{x_e} + t_\alpha \frac{s_e}{\sqrt{n}}]= [63.73;64.27]$
+    \item $1-\alpha = 90\% \Rightarrow t_\alpha = 1,645$\\
+    $I=[\overline{x_e} - t_\alpha \frac{s_e}{\sqrt{n}};\overline{x_e} + t_\alpha \frac{s_e}{\sqrt{n}}] = [63.34;64.66]$
+    \item $1-\alpha = 99\% \Rightarrow t_\alpha = 1,2576$\\
+    $I=[\overline{x_e} - t_\alpha \frac{s_e}{\sqrt{n}};\overline{x_e} + t_\alpha \frac{s_e}{\sqrt{n}}]= [62.97;65,03]$
+\end{itemize}
+
+Déterminer $t_\alpha$:\\
+\begin{align*}
+    P(- t_\alpha \leq Y \leq t_\alpha) = 1-\alpha &\Leftrightarrow P(Y \leq t_\alpha) - P(Y < -t_\alpha) = 1-\alpha\\
+    &\Leftrightarrow P(Y \leq t_\alpha) - (1-P(Y \leq t_\alpha)) = 1 - \alpha\\
+    &\Leftrightarrow 2P(Y \leq t_\alpha) -1 = 1- \alpha\\
+    &\Leftrightarrow P(Y \leq t_\alpha)  = 0,75\\
+    &\text{Par lecture de la table} t_\alpha = 0.67 
+\end{align*}
+
+\section{Exercice 6}
+
+Soit $\fct{g}{\R}{\R}{p}{\prod_{i=1}^n (1-p)^{i-1}p}$\\
+D'ou 
+\begin{align*}
+    ln(g)(p) = \sum_{i=1}^n ln((1-p)^{x_i-1}p)\\
+    ln(g)(p) = \sum_{i=1}^n ln((1-p)^{x_i-1}) + \sum_{i=1}^n ln(p)\\
+    ln(g)(p) = \sum_{i=1}^{n} ln((1-p)^{x_i-1}) + nln(p)\\
+    ln(g)(p) = ln(1-p)(-n + \sum_{i=1}^{n} x_i)  + nln(p)\\
+\end{align*}
+Dérivons:
+\begin{align*}
+    (ln(g))'(p) = \frac{n}{p} - \frac{1}{1-p}\sum_{i=1}^{n} x_i + \frac{n}{1-p}\\
+    (ln(g))'(p) = 0 &\Leftrightarrow \frac{n}{p} - \frac{1}{1-p}\sum_{i=1}^{n} x_i + \frac{n}{1-p} =0\\
+    \Leftrightarrow n(1-p) = p (\sum_{i=1}^{n} x_i  - n)\\
+    \Leftrightarrow n = p \sum_{i=1}^n x_i\\
+    \Leftrightarrow p = \frac{n}{\sum_{i=1}^n x_i}
+\end{align*}
+ReDérivons pour savoir si c'est un maximum ou un minimum:\\
+\begin{align*}
+    (ln(g))''(p) = \frac{-n}{p^2} - \frac{1}{(p-1)^2}\sum_{i=1}^n x_i  + \frac{n}{(1-p)^2}\\
+    (ln(g))''(p) = \frac{-n}{p^2} - \frac{1}{(p-1)^2}(\sum_{i=1}^n x_i   -n)\\
+    \leq 0
+\end{align*}
+\chapter*{Annexe}
+
+\begin{tabular}{|l|c|c|c|c|c|c|c|c|c|c|}
     \hline
     x & 0,00 & 0,01 & 0,02 & 0,03 & 0,04 & 0,05 & 0,06 & 0,07 & 0,08 & 0,09\\ 
     \hline 
-    0,0
+0,0 & 0.5000 & 0.5040 & 0.5080 & 0.5120 & 0.5160 & 0.5199 & 0.5239& 0.5279& 0.5319& 0.5359\\
+\hline
+0.1 & 0.5398 & 0.5438 & 0.5478 & 0.5517 & 0.5557 & 0.5596 & 0.5636& 0.5675& 0.5714& 0.5753\\
+\hline
+0.2 & 0.5793 & 0.5832 & 0.5871 & 0.5910 & 0.5948 & 0.5987 & 0.6026& 0.6064& 0.6103& 0.6141\\
+\hline
+0.3 & 0.6179 & 0.6217 & 0.6255 & 0.6293 & 0.6331 & 0.6368 & 0.6406& 0.6443& 0.6480& 0.6517\\
+\hline
+0.4 & 0.6554 & 0.6591 & 0.6628 & 0.6664 & 0.6700 & 0.6736 & 0.6772& 0.6808& 0.6844& 0.6879\\
+\hline
+0.5 & 0.6915 & 0.6950 & 0.6985 & 0.7019 & 0.7054 & 0.7088 & 0.7123& 0.7157& 0.7190& 0.7224\\
+\hline
+0.6 & 0.7257 & 0.7291 & 0.7324 & 0.7357 & 0.7389 & 0.7422 & 0.7454& 0.7486& 0.7517& 0.7549\\
+\hline
+0.7 & 0.7580 & 0.7611 & 0.7642 & 0.7673 & 0.7704 & 0.7734 & 0.7764& 0.7794& 0.7823& 0.7852\\
+\hline
+0.8 & 0.7881 & 0.7910 & 0.7939 & 0.7967 & 0.7995 & 0.8023 & 0.8051& 0.8078& 0.8106& 0.8133\\
+\hline
+0.9 & 0.8159 & 0.8186 & 0.8212 & 0.8238 & 0.8264 & 0.8289 & 0.8315& 0.8340& 0.8365& 0.8389\\
+\hline
+1.0 & 0.8413 & 0.8438 & 0.8461 & 0.8485 & 0.8508 & 0.8531 & 0.8554& 0.8577& 0.8599& 0.8621\\
+\hline!
+1.1 & 0.8643 & 0.8665 & 0.8686 & 0.8708 & 0.8729 & 0.8749 & 0.8770& 0.8790& 0.8810& 0.8830\\
+\hline
+1.2 & 0.8849 & 0.8869 & 0.8888 & 0.8907 & 0.8925 & 0.8944 & 0.8962& 0.8980& 0.8997& 0.9015\\
+\hline
+1.3 & 0.9032 & 0.9049 & 0.9066 & 0.9082 & 0.9099 & 0.9115 & 0.9131& 0.9147& 0.9162& 0.9177\\
+\hline
+1.4 & 0.9192 & 0.9207 & 0.9222 & 0.9236 & 0.9251 & 0.9265 & 0.9279& 0.9292& 0.9306& 0.9319\\
+\hline
+1.5 & 0.9332 & 0.9345 & 0.9357 & 0.9370 & 0.9382 & 0.9394 & 0.9406& 0.9418& 0.9429& 0.9441\\
+\hline
+1.6 & 0.9452 & 0.9463 & 0.9474 & 0.9484 & 0.9495 & 0.9505 & 0.9515& 0.9525& 0.9535& 0.9545\\
+\hline
+1.7 & 0.9554 & 0.9564 & 0.9573 & 0.9582 & 0.9591 & 0.9599 & 0.9608& 0.9616& 0.9625& 0.9633\\
+\hline
+1.8 & 0.9641 & 0.9649 & 0.9656 & 0.9664 & 0.9671 & 0.9678 & 0.9686& 0.9693& 0.9699& 0.9706\\
+\hline
+1.9 & 0.9713 & 0.9719 & 0.9726 & 0.9732 & 0.9738 & 0.9744 & 0.9750& 0.9756& 0.9761& 0.9767\\
+\hline
+2.0 & 0.9772 & 0.9778 & 0.9783 & 0.9788 & 0.9793 & 0.9798 & 0.9803& 0.9808& 0.9812& 0.9817\\
+\hline
+2.1 & 0.9821 & 0.9826 & 0.9830 & 0.9834 & 0.9838 & 0.9842 & 0.9846& 0.9850& 0.9854& 0.9857\\
+\hline
+2.2 & 0.9861 & 0.9864 & 0.9868 & 0.9871 & 0.9875 & 0.9878 & 0.9881& 0.9884& 0.9887& 0.9890\\
+\hline
+2.3 & 0.9893 & 0.9896 & 0.9898 & 0.9901 & 0.9904 & 0.9906 & 0.9909& 0.9911& 0.9913& 0.9916\\
+\hline
+2.4 & 0.9918 & 0.9920 & 0.9922 & 0.9925 & 0.9927 & 0.9929 & 0.9931& 0.9932& 0.9934& 0.9936\\
+\hline
+2.5 & 0.9938 & 0.9940 & 0.9941 & 0.9943 & 0.9945 & 0.9946 & 0.9948& 0.9949& 0.9951& 0.9952\\
+\hline
+2.6 & 0.9953 & 0.9955 & 0.9956 & 0.9957 & 0.9959 & 0.9960 & 0.9961& 0.9962& 0.9963& 0.9964\\
+\hline
+2.7 & 0.9965 & 0.9966 & 0.9967 & 0.9968 & 0.9969 & 0.9970 & 0.9971& 0.9972& 0.9973& 0.9974\\
+\hline
+2.8 & 0.9974 & 0.9975 & 0.9976 & 0.9977 & 0.9977 & 0.9978 & 0.9979& 0.9979& 0.9980& 0.9981\\
+\hline
+2.9  &0.9981  &0.9982  &0.9982  &0.9983  &0.9984  &0.9984  &0.9985 &0.9985 &0.9986 &0.9986 \\
+\hline
 \end{tabular}
 \end{document}

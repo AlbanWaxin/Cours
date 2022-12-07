@@ -3,20 +3,19 @@
  */
 package safes;
 
-import valuables.Gemstone;
+import valuables.Storable;
 import valuables.Valuable;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 
-import javax.print.PrintException;
 
 /**
  * A simple safe
  * 
  * @author ceichler
  */
-public class GenericSafe<T1> implements Valuable {
+public class GenericSafe<T1 extends Valuable & Storable<GenericSafe<T1>>> implements Valuable,Storable<GenericSafe<GenericSafe<T1>>>{
 
 	/**
 	 * Capacity of the safe (in gemstones)
@@ -26,7 +25,7 @@ public class GenericSafe<T1> implements Valuable {
 	/**
 	 * Current number of gems stored in the safe
 	 */
-	private int currGemNb = 0;
+	private int currObjNb = 0;
 
 	/**
 	 * Boolean tracking the opened/closed state of the safe
@@ -57,6 +56,7 @@ public class GenericSafe<T1> implements Valuable {
 		capacity = capac;
 		System.out.println("Safe constructor with capacity");
 	}
+
 
 	protected double sum() {
 		double sum = 0;
@@ -139,52 +139,53 @@ public class GenericSafe<T1> implements Valuable {
 	 */
 
 	public boolean isFull() {
-		return this.currGemNb == this.capacity;
+		return this.currObjNb == this.capacity;
 	}
 
 	/**
-	 * Add a gemstone in the safe
+	 * Add a object in the safe
 	 * 
-	 * @param gem the gemstone to add
+	 * @param object the object to add
 	 */
 
-	public void addGem(T1 gem) {
-		// Testing whether we can add a gem
+	public void addObject(T1 object) {
+		// Testing whether we can add a object
 		// Is the safe opened?
 		if (!opened)
-			System.err.println("Impossible to add a gem; the safe is closed!");
+			System.err.println("Impossible to add a object; the safe is closed!");
 		// Is it full?
 		else if (isFull())
-			System.err.println("Impossible to add a gem; the safe is full!");
-		// Is the Gem already in another Safe?
-		else if (gem.getMySafe() != null)
-			System.err.println("Impossible to add a gem; it's already in another safe!");
+			System.err.println("Impossible to add a object; the safe is full!");
+		// Is the object already in another Safe?
+		else if (object.getMyContainer() != null)
+		System.err.println("Impossible to add a object; it's already in another safe!");
 		// Good to go!
 		else {
-			myContent.add(gem);
-			gem.setMySafe(this);
-			this.currGemNb++;
+			myContent.add(object);
+			object.setMyContainer(this);
+			this.currObjNb++;
 		}
 	}
 
 	/**
-	 * Removes a gemstone from the safe
+	 * Removes a object from the safe
 	 * 
-	 * @param gem the gemstone to remove
+	 * @param object the object to remove
 	 */
-
-	public void removeGem(T1 gem) {
-		// Testing whether we can remove the gem
+	
+	public void removeObject(T1 object) {
+		// Testing whether we can remove the object
 		// Is the safe opened?
 		if (!opened)
-			System.err.println("Impossible to remove gem; the safe is closed!");
+			System.err.println("Impossible to remove object; the safe is closed!");
 		// Good to go!
 		else {
-			if (myContent.remove(gem)) {
-				gem.setMySafe(null);
-				this.currGemNb--;
-			} else
-				System.err.println("Impossible to remove the specified gem; it is not in the safe!");
+			if (myContent.remove(object)) {
+				object.setMyContainer(null);
+				this.currObjNb--;
+			} else {
+				System.err.println("Impossible to remove the specified object; it is not in the safe!");
+		}
 		}
 	}
 
@@ -200,8 +201,19 @@ public class GenericSafe<T1> implements Valuable {
 		if (d.getValue() > min_value) {
 			return d;
 		} else {
-			d = new T1(-1);
+			//d = new T1(-1);
 			return d;
 		}
 	}
+	private GenericSafe<GenericSafe<T1>> myContainer = null;
+	
+	public void setMyContainer(GenericSafe<GenericSafe<T1>> container) {
+		this.myContainer = container;
+	}
+	
+	public GenericSafe<GenericSafe<T1>> getMyContainer(){
+		return this.myContainer;
+	}
+	
 }
+		

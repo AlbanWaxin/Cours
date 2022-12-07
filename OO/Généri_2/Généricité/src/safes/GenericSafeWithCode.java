@@ -1,12 +1,15 @@
 package safes;
 
+import valuables.Storable;
+import valuables.Valuable;
+
 /**
  * Coffre protégé par un code
  * 
  * @author ceichler
  *
  */
-public class SafeWithCode extends GenericSafe {
+public class GenericSafeWithCode<T1 extends Valuable & Storable<GenericSafe<T1>>> extends GenericSafe<T1> {
 
 	/**
 	 * Nombre maximal de tentative avant blocage
@@ -24,7 +27,7 @@ public class SafeWithCode extends GenericSafe {
 	/**
 	 * Construit un coffre avec une valeur de code conventionnelle
 	 */
-	public SafeWithCode() {
+	public GenericSafeWithCode() {
 		super();
 	}
 
@@ -33,7 +36,7 @@ public class SafeWithCode extends GenericSafe {
 	 * 
 	 * @param capac capacité du coffre en nombre d'objets
 	 */
-	public SafeWithCode(int capac) {
+	public GenericSafeWithCode(int capac) {
 		super(capac);
 	}
 
@@ -43,7 +46,7 @@ public class SafeWithCode extends GenericSafe {
 	 * @param capac capacité du coffre en nombre d'objets
 	 * @param code  code secret permettant d'ouvrir le coffre
 	 */
-	public SafeWithCode(int capac, int code) {
+	public GenericSafeWithCode(int capac, int code) {
 		super(capac);
 		this.code = code;
 	}
@@ -55,7 +58,7 @@ public class SafeWithCode extends GenericSafe {
 	 * @param currCode code courrant pour des raisons de sécurité
 	 */
 	public void setCode(int newCode, int currCode) {
-		if (this.cmptAttempt < SafeWithCode.BRUTEFORCE && currCode == this.code)
+		if (this.cmptAttempt < GenericSafeWithCode.BRUTEFORCE && currCode == this.code)
 			this.code = newCode;
 		else {
 			cmptAttempt++;
@@ -89,7 +92,7 @@ public class SafeWithCode extends GenericSafe {
 	 */
 	public boolean checkCode(int code) {
 		boolean ok = false;
-		if (this.cmptAttempt < SafeWithCode.BRUTEFORCE && code == this.code) {
+		if (this.cmptAttempt < GenericSafeWithCode.BRUTEFORCE && code == this.code) {
 			ok = true;
 			cmptAttempt = 0;
 		} else {
