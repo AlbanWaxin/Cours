@@ -1,0 +1,358 @@
+\documentclass[12pt]{report}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[fleqn]{amsmath}
+\usepackage{amsfonts,amssymb,stmaryrd}
+\usepackage[english]{babel}
+\usepackage{pdfpages}
+
+%=============Affichage=======================
+\usepackage{fullpage}
+\usepackage{mathtools}
+\usepackage{lmodern}
+\usepackage{xcolor}
+\usepackage{enumitem}
+\usepackage{tikz,tkz-tab}
+\usepackage[ruled,vlined]{algorithm2e}
+\usepackage{booktabs}
+\usepackage{setspace}
+\usepackage{tikz}
+\usetikzlibrary{arrows,automata}
+\title{TD Statistiques 3A STI}
+\author{Waxin Alban}
+
+\definecolor{almond}{rgb}{0.94, 0.87, 0.8}
+\definecolor{champagne}{rgb}{0.97, 0.91, 0.81}
+\definecolor{dgreen}{rgb}{0.0, 0.5, 0.0}
+\definecolor{bc}{rgb}{0.8588, 0.8980, 0.9450}
+
+\setlength{\topmargin}{-1.5cm}
+\setlength{\textheight}{25cm}
+\setlength{\textwidth}{16cm}
+\setlength{\oddsidemargin}{-1.5cm}
+\setlength{\evensidemargin}{50cm}
+\doublespacing  
+
+\newcommand{\rd}[1]{\textcolor{red}{#1}}
+\newcommand{\g}[1]{\textcolor{lime}{#1}}
+\newcommand{\dg}[1]{\textcolor{dgreen}{#1}}
+\newcommand{\blue}[1]{\textcolor{blue}{#1}}
+\newcommand{\cy}[1]{\textcolor{cyan}{#1}}
+\newcommand{\blz}{$\blacklozenge$}
+\newcommand{\ns}{\\\indent\indent\vspace{0.25cm}}
+\setcounter{secnumdepth}{5}% profondeur de la table des matières
+\usepackage{titlesec}
+
+
+\titleformat{\chapter}[frame]
+{\Huge}
+{\filright\rmfamily\bfseries\Huge\enspace\thechapter\enspace}
+{18pt}
+{\rmfamily\huge\bfseries\filcenter}
+% rmfamily=roman, sffamily = sans serif ou ttfamily =type writer
+\usepackage[many]{tcolorbox} % Creation de box collorable pour le texte non intégré
+\newtcolorbox{mybox}{colback=bc,
+colframe=black,arc=0mm,sharp corners= northwest,arc=10pt}
+
+\newtcolorbox{demo}{colback=almond,
+colframe=black,arc=0mm,sharp corners= northeast,arc=10pt}
+
+\renewcommand*{\overrightarrow}[1]{\vbox{\halign{##\cr
+ \tiny\rightarrowfill\cr\noalign{\nointerlineskip\vskip1pt}
+ $#1\mskip2mu$\cr}}}
+
+\newcommand{\rem}[1]
+{
+\subparagraph*{\underline{Remarque:#1}}\mbox{}\\
+}
+
+\newcommand{\props}[1]
+{
+\begin{mybox}
+\textbf{\rd{\underline{\blz Propriété:} #1}}
+\vspace{0.5cm}
+\newline
+}
+
+\newcommand{\prope}
+{
+\end{mybox}
+}
+
+\newcommand{\scal}[2]
+{
+<#1|#2>
+}
+
+\newcommand{\defis}[1]
+{
+\begin{mybox}
+\textbf{\rd{\underline{\blz Définition:} #1}}
+\vspace{0.5cm}
+\newline
+}
+\newcommand{\defie}
+{
+\end{mybox}
+}
+\newcommand{\demos}[1]
+{
+\begin{demo}
+\textbf{\underline{\blz Démonstration:} #1}
+\newline
+}
+\newcommand{\demoe}
+{
+\end{demo}
+}
+\newcommand{\exe}[1]
+{
+\subparagraph*{\underline{Exemple:#1}}\mbox{}\\
+}
+
+\newcommand{\vs}
+{
+\vspace{0.25cm}
+}
+
+\newcommand{\thms}[1]
+{
+\begin{mybox}
+\textbf{\rd{\underline{\blz Théorème:} #1}}
+\vspace{0.5cm}
+\newline
+}
+
+\newcommand{\thme}
+{
+\end{mybox}
+}
+
+\newcommand{\coros}[1]
+{
+\begin{mybox}
+\textbf{\rd{\underline{\blz Corolaire:} #1}}
+\vspace{0.5cm}
+\newline
+}
+
+\newcommand{\coroe}
+{
+\end{mybox}
+}
+
+\newcommand{\lems}[1]
+{
+\begin{mybox}
+\textbf{\rd{\underline{\blz Lemme:} #1}}
+\vspace{0.5cm}
+\newline
+}
+
+\newcommand{\leme}
+{
+\end{mybox}
+}
+%=============================================
+
+%\usepackage[cm]{aeguill}
+
+%=============Mathématiques=================
+
+%--------------Raccourcis:------------------
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\C}{\mathbb{C}}
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\Q}{\mathbb{Q}}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\K}{\mathbb{K}}
+\newcommand{\M}{\mathcal{M}}
+\newcommand{\nint}[1]{#1 \in \N}
+\newcommand{\zint}[1]{#1 \in \N^*}
+\newcommand{\limi}[1]{\underset{#1 \to \infty}{lim}}
+\newcommand{\limn}[2]{\underset{#1 \to #2}{lim}}
+\newcommand{\x}{\times}
+\newcommand{\un}[1]{u_{#1}}
+\newcommand{\uns}{(u_n)_\nint{n}}
+\newcommand{\Sn}[1]{S_{#1}}
+\newcommand{\Sns}{(S_n)_\nint{n}}
+\newcommand{\ol}[1]{\overline{#1}}
+\newcommand{\znz}{\Z/n\Z}
+\renewcommand{\o}{\circ}
+
+\newcommand{\seriegu}{\sum u_n}
+\newcommand{\seriegv}{\sum v_n}
+\newcommand{\harmonique}{\sum \frac{1}{n}}
+\newcommand{\SRieman}{\sum \frac{1}{n^\alpha}}
+\newcommand{\serie}[3]{\sum_{#1}^{#2}{#3}}
+\newcommand{\satps}{série à terme positif}
+\newcommand{\satp}{séries à termes positifs}
+\newcommand{\pl}[1]{\mathbb{#1}[X]}
+\newcommand{\som}[2]{\sum\limits_{#1}^{#2}}
+
+
+\newcommand{\abs}[1]{\left\lvert#1\right\rvert}
+\DeclarePairedDelimiter{\ceil}{\lceil}{\rceil}
+
+%Format de fonctions:
+\newcommand{\fct}[5]
+	{
+	  \begin{array}{ccccc}
+		#1 & : & #2 & \to & #3 \\
+	    && #4 & \mapsto & #5 \\
+	  \end{array}
+	}
+\newcommand{\dfct}[2] {#1 \mapsto #2}
+
+\renewcommand{\abs}[1]{|#1|}
+\newcommand{\nm}[2]{ ||#1||_{#2} }
+%===================TESTS===================
+
+\begin{document}
+\chapter{Langages Formels}
+\section{Exercice 1}
+\section{Exercice 2}
+\section{Exercice 3}
+\begin{itemize}
+    \item \begin{align*}
+        \begin{cases}
+            A = ( 01^* + 1) A +B\\
+            B = 11 + 1A +00C\\
+            C = \varepsilon + A +B
+        \end{cases} &\Leftrightarrow 
+        \begin{cases}
+            A = ( 01^* + 1)^*B = \Sigma^* B\\
+            B = 11 + 1\Sigma^* B +00 + 00\Sigma^* B + 00B\\
+            C = \varepsilon + (00+1)\Sigma^* B = ((00+1)\Sigma^*)^* (00+11) = ((00+1)\Sigma^*)^*(00+11)
+        \end{cases}\\
+        & \Leftrightarrow
+        \begin{cases}
+            A = ( 01^* + 1)^*B = \Sigma^* B\\
+            B = 11 + 1\Sigma^* B +00 + 00\Sigma^* B + 00B\\
+            C = \varepsilon + \Sigma^* (00 + 11) + (00+11) = \Sigma^*(00+11)+\varepsilon
+        \end{cases}
+        \end{align*} 
+    \item DEMO ARDEN     
+\end{itemize}
+
+\chapter{Expressions rationnelles}
+\section{Exercice 4 et 5}
+
+\begin{itemize}
+    \item $(a+b)^*(aa + bb)(a+b)^*$\\
+    \begin{center}
+        \begin{tikzpicture}[scale=0.2]
+        \tikzstyle{every node}+=[inner sep=0pt]
+        \draw [black] (11.6,-13.5) circle (3);
+        \draw (11.6,-13.5) node {$q_0$};
+        \draw [black] (31.1,-5) circle (3);
+        \draw (31.1,-5) node {$q_1$};
+        \draw [black] (31.1,-22.7) circle (3);
+        \draw (31.1,-22.7) node {$q_2$};
+        \draw [black] (50.5,-13.5) circle (3);
+        \draw (50.5,-13.5) node {$q_3$};
+        \draw [black] (8.617,-13.319) arc (294.25512:6.25512:2.25);
+        \draw (5.08,-8.93) node [left] {$a,b$};
+        \fill [black] (9.93,-11.02) -- (10.06,-10.09) -- (9.15,-10.5);
+        \draw [black] (14.35,-12.3) -- (28.35,-6.2);
+        \fill [black] (28.35,-6.2) -- (27.42,-6.06) -- (27.82,-6.98);
+        \draw (22.42,-9.76) node [below] {$a$};
+        \draw [black] (33.85,-6.2) -- (47.75,-12.3);
+        \fill [black] (47.75,-12.3) -- (47.22,-11.52) -- (46.82,-12.43);
+        \draw (39.73,-9.76) node [below] {$a$};
+        \draw [black] (50.681,-10.517) arc (204.25512:-83.74488:2.25);
+        \draw (55.9,-7.14) node [above] {$a,b$};
+        \fill [black] (52.98,-11.83) -- (53.91,-11.96) -- (53.5,-11.05);
+        \draw [black] (14.31,-14.78) -- (28.39,-21.42);
+        \fill [black] (28.39,-21.42) -- (27.88,-20.63) -- (27.45,-21.53);
+        \draw (20.23,-18.61) node [below] {$b$};
+        \draw [black] (33.81,-21.41) -- (47.79,-14.79);
+        \fill [black] (47.79,-14.79) -- (46.85,-14.68) -- (47.28,-15.58);
+        \draw (41.92,-18.61) node [below] {$b$};
+        \end{tikzpicture}
+        \begin{tikzpicture}[scale=0.25]
+            \tikzstyle{every node}+=[inner sep=0pt]
+            \draw [black] (9.1,-12.8) circle (3);
+            \draw (9.1,-12.8) node {$0$};
+            \draw [black] (29.7,-5.2) circle (3);
+            \draw (29.7,-5.2) node {$0,1$};
+            \draw [black] (29.7,-20.3) circle (3);
+            \draw (29.7,-20.3) node {$0,2$};
+            \draw [black] (53.5,-5.2) circle (3);
+            \draw (53.5,-5.2) node {$0,1,3$};
+            \draw [black] (53.5,-5.2) circle (2.4);
+            \draw [black] (53.5,-20.3) circle (3);
+            \draw (53.5,-20.3) node {$0,2,3$};
+            \draw [black] (53.5,-20.3) circle (2.4);
+            \draw [black] (11.91,-11.76) -- (26.89,-6.24);
+            \fill [black] (26.89,-6.24) -- (25.96,-6.05) -- (26.31,-6.98);
+            \draw (20.42,-9.53) node [below] {$a$};
+            \draw [black] (11.92,-13.83) -- (26.88,-19.27);
+            \fill [black] (26.88,-19.27) -- (26.3,-18.53) -- (25.96,-19.47);
+            \draw (18.34,-17.08) node [below] {$b$};
+            \draw [black] (32.7,-20.3) -- (50.5,-20.3);
+            \fill [black] (50.5,-20.3) -- (49.7,-19.8) -- (49.7,-20.8);
+            \draw (41.6,-20.8) node [below] {$b$};
+            \draw [black] (32.7,-5.2) -- (50.5,-5.2);
+            \fill [black] (50.5,-5.2) -- (49.7,-4.7) -- (49.7,-5.7);
+            \draw (41.6,-5.7) node [below] {$a$};
+            \draw [black] (29.7,-17.3) -- (29.7,-8.2);
+            \fill [black] (29.7,-8.2) -- (29.2,-9) -- (30.2,-9);
+            \draw (30.2,-12.75) node [right] {$a$};
+            \draw [black] (29.7,-8.2) -- (29.7,-17.3);
+            \fill [black] (29.7,-17.3) -- (30.2,-16.5) -- (29.2,-16.5);
+            \draw (29.2,-12.75) node [left] {$b$};
+            \draw [black] (53.5,-8.2) -- (53.5,-17.3);
+            \fill [black] (53.5,-17.3) -- (54,-16.5) -- (53,-16.5);
+            \draw (53,-12.75) node [left] {$b$};
+            \draw [black] (53.5,-17.3) -- (53.5,-8.2);
+            \fill [black] (53.5,-8.2) -- (53,-9) -- (54,-9);
+            \draw (54,-12.75) node [right] {$a$};
+            \draw [black] (55.6,-3.074) arc (163.09349:-124.90651:2.25);
+            \draw (60.64,-2.25) node [right] {$a$};
+            \fill [black] (56.46,-5.57) -- (57.08,-6.28) -- (57.38,-5.33);
+            \draw [black] (56.463,-20.686) arc (110.30993:-177.69007:2.25);
+            \draw (59.73,-25.38) node [right] {$b$};
+            \fill [black] (55,-22.89) -- (54.8,-23.81) -- (55.74,-23.46);
+        \end{tikzpicture}
+        \begin{tikzpicture}[scale=0.2]
+            \tikzstyle{every node}+=[inner sep=0pt]
+            \draw [black] (9.4,-12) circle (3);
+            \draw (9.4,-12) node {$I$};
+            \draw [black] (27,-4.8) circle (3);
+            \draw (27,-4.8) node {$II$};
+            \draw [black] (26.9,-19.6) circle (3);
+            \draw (26.9,-19.6) node {$III$};
+            \draw [black] (49,-12) circle (3);
+            \draw (49,-12) node {$IV$};
+            \draw [black] (49,-12) circle (2.4);
+            \draw [black] (12.18,-10.86) -- (24.22,-5.94);
+            \fill [black] (24.22,-5.94) -- (23.29,-5.78) -- (23.67,-6.7);
+            \draw (19.25,-8.92) node [below] {$a$};
+            \draw [black] (51.68,-10.677) arc (144:-144:2.25);
+            \draw (56.25,-12) node [right] {$a,b$};
+            \fill [black] (51.68,-13.32) -- (52.03,-14.2) -- (52.62,-13.39);
+            \draw [black] (29.85,-5.73) -- (46.15,-11.07);
+            \fill [black] (46.15,-11.07) -- (45.54,-10.34) -- (45.23,-11.29);
+            \draw (37.03,-8.94) node [below] {$a$};
+            \draw [black] (12.15,-13.2) -- (24.15,-18.4);
+            \fill [black] (24.15,-18.4) -- (23.61,-17.63) -- (23.22,-18.54);
+            \draw (17.04,-16.31) node [below] {$b$};
+            \draw [black] (29.74,-18.62) -- (46.16,-12.98);
+            \fill [black] (46.16,-12.98) -- (45.24,-12.76) -- (45.57,-13.71);
+            \draw (38.98,-16.34) node [below] {$b$};
+            \draw [black] (26.92,-16.6) -- (26.98,-7.8);
+            \fill [black] (26.98,-7.8) -- (26.47,-8.6) -- (27.47,-8.6);
+            \draw (27.46,-12.2) node [right] {$a$};
+            \draw [black] (26.98,-7.8) -- (26.92,-16.6);
+            \fill [black] (26.92,-16.6) -- (27.43,-15.8) -- (26.43,-15.8);
+            \draw (26.44,-12.2) node [left] {$b$};
+        \end{tikzpicture}
+            
+    \end{center}   
+    \item $((a+b)^3)^*$
+\end{itemize}
+
+ 
+
+\end{document}
