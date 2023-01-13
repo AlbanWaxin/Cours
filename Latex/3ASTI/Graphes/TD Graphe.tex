@@ -211,7 +211,58 @@ colframe=black,arc=0mm,sharp corners= northeast,arc=10pt}
 \begin{document}
 \chapter{Langages Formels}
 \section{Exercice 1}
+\begin{enumerate}
+    \item \begin{align*}
+        (KL)^* &= \bigcup_{i=0}^n (KL)^i\\
+               &= \lbrace \varepsilon \rbrace \cup (\bigcup_{i=1}^n (KL)^i)\\
+               &= \lbrace \varepsilon \rbrace \cup (\bigcup_{i=0}^n(KL)(KL)^{i+1})\\
+               &= \lbrace \varepsilon \rbrace \cup (KL)(\bigcup_{n\in \N}(KL)^{n})\\
+               &= \lbrace \varepsilon \rbrace \cup (KL)(KL)^*
+    \end{align*}
+    \demos{LEMME 1: $K(LK)^*L = (KL)(KL)^*$}
+        Par démonstration du Lemme 2 suivant, vrais pour tout N donc vrais pour l'union
+    \demoe{}
+    \demos{LEMME 2 :$K(LK)^nL = (KL)(KL)^n$}
+        n=0,  KL = KL\\
+        Soit $n \in \N$
+        \begin{align*}
+            (KL)(KL)^n &=  (KL)(KL)(KL)^{n-1}\\
+            HR         &=  (KL)K(LK)^{n-1}L\\
+            Associativité  &=  K(LK)(LK)^{n-1}L\\
+                       &= K(LK)^n L\\
+        \end{align*}
+    \demoe{}
+    \item Soit $n \in \N^*$ \\
+    \begin{align*}
+        K^*=\bigcup_{k\in\N}K^k &=\bigcup_{q=0}^{n-1} \bigcup_{m \in [q]}K^m\\
+        &= \bigcup_{q=0}^{n-1} \bigcup_{p \in \N}K^{np+q}\\
+        &= \bigcup_{q=0}^{n-1} (\bigcup_{p \in \N}K^{np})K^q\\
+        &= \bigcup_{q=0}^{n-1} (K^n)^*K^q\\
+        &= (K^n)^* \bigcup_{q=0}^{n-1} K^q\\
+    \end{align*}
+    \item $(K\cup L)^* = \bigcup_{n\in N} (K \cup L)^n$\\
+    $\# w = n, \exists u,v \in (K \cup L)^* et l \in L$ tel que $ w = ulv$\\
+    or $\# = n $ d'ou $\#u \leq n$ et $\#v \leq n$\\
+    Hypothèse: $u,v \in (K^*L)^*K^*$\\
+    $w = ulv \in (K^*L)^*(K^*L)(K^*L)^*K^*$\\
+    A FINIR
+\end{enumerate}
 \section{Exercice 2}
+
+$\Sigma = \lbrace 0,1 \rbrace$\\
+
+$n = 2, f_2 = f_1f_0 = 0$; 2 est pair\\
+$n = 3, f_3 = f_2f_1 = f_1f_0f_1 = 010$ 3 est impair\\
+$n = 4, f_4 = f_3f_1 = 01001$\\
+
+$w_n = \begin{cases}
+    01 \text{ si } n\in 2\N\\
+    10 \text{ sinon}
+\end{cases}$
+
+Montrons qu'il existe $g_n$ tel que $f_n = g_nw_n$\\
+$f_n = f_{n-1}f_{n-2} = f_{n-1}g_{n-2}w_{n-2} = f_{n-1}g_{n-2}w_n$\\
+$g_n = f_{n-1}g_{n-2} = g_{n-1}w_{n-1}g_{n-2} = (g_{n-2}w_{n-2}g_{n-3})w_{n-1}g_{n-2}$\\
 \section{Exercice 3}
 \begin{itemize}
     \item \begin{align*}
