@@ -23,24 +23,42 @@ linked_list *remove_all_users(linked_list *list_link){
     return list_link;
 }
 
-linked_list *remove_user(linked_list *list_link,User *user){
-    linked_list *elt = list_link;
-    linked_list *prev_elt = NULL;
-    linked_list *next_elt = NULL;
+linked_list *find_user_list(linked_list *list,User *user){
+    linked_list *elt = list;
     while (elt) {
-        next_elt = elt->next;
-        prev_elt = elt->prev;
         if (elt->user == user) {
-            free(elt->user);
-            elt->prev = NULL;
-            elt->next = NULL;
-            prev_elt->next = next_elt;
-            next_elt->prev = prev_elt;
-            return list_link;
+            return elt;
         }
-        elt = next_elt;
     }
     return NULL;
+}
+
+linked_list *remove_user(linked_list *list_link,User *user){
+    linked_list *elt = find_user_list(list_link,user);
+    if (!elt){
+        return NULL;
+    }
+    else if (elt == list_link){
+        list_link->prev = NULL;
+        list_link = elt->next;
+        free(elt->user);
+        free(elt);
+        return list_link;
+        
+    }
+    linked_list *next_elt = elt->next;
+    linked_list *prev_elt = elt->prev;
+    free(elt->user);
+    elt->prev = NULL;
+    elt->next = NULL;
+    if (next_elt){
+        next_elt->prev = prev_elt;
+    }
+    if (prev_elt){
+        prev_elt->next = next_elt;
+    }
+    free(elt);
+    return list_link;
 }
 
 User *find_user(linked_list *list_link,char *name){

@@ -56,9 +56,8 @@ int main(int argc, char* argv[]){
         if ((clifd =accept(sockfd,(struct sockaddr*)&client_addr,(socklen_t * restrict)&cli_len))<0){
                 stop("accept");
             }
-        for (int i = 0; i < 1; i++)
+        for (int i = 0; i < 1000; i++)
         {
-        
             bzero(message,sizeof(message));
             if ((nb_char = recv(clifd,message,sizeof(message),0)) < 0){
                 stop("recv");
