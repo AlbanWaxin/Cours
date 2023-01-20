@@ -1,0 +1,56 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <errno.h>
+#include <stdint.h>
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <netinet/udp.h>
+#include <netdb.h>
+#include <strings.h>
+#include  <unistd.h>
+#include <sys/types.h>
+#include <arpa/inet.h>
+#include <time.h>
+#include "string.h"
+
+
+void stop(char* msg){
+    perror(msg);
+    exit(EXIT_FAILURE);
+}
+
+int main(int argc, char* argv[]){
+    char message[1025];
+    char * buf = "ECHO";
+    int nb_char; 
+    int sockfd = socket(AF_INET,SOCK_STREAM,0);
+    if(sockfd<0){
+        stop("socket");
+    }
+    struct sockaddr_in clientaddr;
+    memset(&clientaddr,0,sizeof(clientaddr));
+    clientaddr.sin_family = AF_INET;
+    clientaddr.sin_addr.s_addr = inet_addr("127.0.0.1");
+    clientaddr.sin_port = htons(8888);
+    int len = sizeof(clientaddr);
+    int n;
+    if((n = connect(sockfd,(struct sockaddr*)&clientaddr,len))<0){
+        stop("connect");
+    }
+    for (int i = 0; i < 1000; i++)
+    {
+        int m;
+        if ((m = send(sockfd,buf,strlen(buf),0))<0){
+            stop("send");
+        }
+        bzero(message,sizeof(message));
+        if ((nb_char = recv(sockfd,message,sizeof(message),0)) < 0){
+            stop("recv");
+        }
+        if(nb_char > 0){
+            printf("%s \n",message);
+        }
+    }
+    close(sockfd);
+    return 0;    
+}
