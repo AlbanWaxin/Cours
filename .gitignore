@@ -12,6 +12,7 @@ Projet/
 !*.html
 !*.css
 !*.javascript
+!*.php
 !makefile
 !README.txt
 !.gitignore
