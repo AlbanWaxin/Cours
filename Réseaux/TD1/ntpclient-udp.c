@@ -30,7 +30,7 @@ int main(int argc, char* argv[]){
     bcopy(server->h_addr,&serv_addr.sin_addr.s_addr,server->h_length);
     int portno = 123;
     serv_addr.sin_port=htons(portno);
-    if (connect(sockfd,(struct sockaddr *) &serv_addr,sizeof(serv_addr))){
+    if (connect(sockfd,(struct sockaddr *) &serv_addr,sizeof(serv_addr))<0){
         error("Error connect");
     }
     //char buffer[BUFSIZ+1];

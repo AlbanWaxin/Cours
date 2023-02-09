@@ -8,6 +8,10 @@ Projet/
 !*.c
 !*.h
 !*.py
+!*.png
+!*.html
+!*.css
+!*.javascript
 !makefile
 !README.txt
 !.gitignore

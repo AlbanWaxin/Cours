@@ -96,3 +96,22 @@ int max(int a, int b){
     return a>b?a:b;
 }
 
+int has_delimiter(char * text){
+    int i=0;
+    while(text[i]!='\0'){
+        if(text[i]=='\n'){
+            return 1;
+        }
+        i++;
+    }
+    return 0;
+}
+
+char *uppercase(char *str) {
+    int p = 0;
+    while (str[p]) {
+        str[p] = toupper(str[p]);
+        p += 1;
+    };
+    return str;
+};

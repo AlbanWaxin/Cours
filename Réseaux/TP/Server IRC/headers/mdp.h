@@ -6,9 +6,21 @@
 #include <string.h>
 
 typedef struct {
-    char pseudo[256];
-    char password[256];
+    char* pseudo;
+    char* password;
 } logins;
 
-int read_file(const char *file_name);
-void write_file(logins *logs,const char *file_name);
+logins *create_login(char* pseudo,char* password);
+
+typedef struct mdp_linked_list
+{
+    struct mdp_linked_list *next;
+    logins *login;
+} mdp_list;
+
+int get_mdp_list_size(mdp_list *list);
+mdp_list *remove_all_mdps(mdp_list *list);
+mdp_list *add_mdp(mdp_list *list, logins* mdp);
+mdp_list *find_mdp(mdp_list *list, char *pseudo);
+void print_mdps(mdp_list *list);
+#endif

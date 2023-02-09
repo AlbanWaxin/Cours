@@ -4,24 +4,79 @@
 #include <sys/wait.h>
 
 #define COMMANDSIZE 2048
+#define MAX_WORD_COUNT 1024
+#define MAX_WORD_LENGTH 512
 
-char *command;
+void from_sentence_to_word(char* sentence, char** words_tab, int* nb_word) {
+    int i, j, k;
+    i = j = k = 0;
+    while (sentence[i] != '\0') {
+        if (sentence[i] == ' ' || sentence[i] == '\n') {
+            words_tab[j][k] = '\0';
+            j++;
+            k = 0;
+        } else {
+            words_tab[j][k] = sentence[i];
+            k++;
+        }
+        i++;
+    }
+    words_tab[j][k] = '\0';
+    *nb_word = j+1;
+}
+
+int countWords(const char* sentence) {
+    int count = 0;
+    int inWord = 0;
+    for (int i = 0; sentence[i]; i++) {
+        if (sentence[i] == ' ' || sentence[i] == '\n') {
+            inWord = 0;
+        } else if (!inWord) {
+            inWord = 1;
+            count++;
+        }
+    }
+    return count;
+}
+
 static void remplir_buffer_0(char* buffer, int size){
     for (size_t i = 0; i < size; i++)
     {
         buffer[i] = '\0';
     }
-    
 }
 
-static int first_word(char* buffer){
-    int ind = 0;
-    while ( buffer[ind] != ' ' && buffer[ind] != '\0')
-    {
-        command[ind] = buffer[ind];
-        ind++;   
+void transform_to_command(char* command_to_transform) {
+    int len = 0;
+    while (command_to_transform[len] != '\0') {
+        len++;
     }
-    return ind;   
+    char* transformed = (char*) mini_calloc(sizeof(char),len + 3);
+    transformed[0] = '.';
+    transformed[1] = '/';
+    for (int i = 0; i < len; i++) {
+        transformed[i + 2] = command_to_transform[i];
+    }
+    transformed[len + 2] = '\0';
+    remplir_buffer_0(command_to_transform, MAX_WORD_LENGTH);
+    for (int j= 0; j < len+2; j++) {
+        command_to_transform[j] = transformed[j];
+    }    
+    mini_free(transformed);
+    return;
+}
+
+
+
+void clear_tab(char** word_tab){
+    int i;
+    char * word;
+    for (i = 0; i < MAX_WORD_COUNT; i++) {
+        word = word_tab[i];
+        if (word!= NULL) {
+            remplir_buffer_0(word,MAX_WORD_LENGTH);
+        }
+    }
 }
 
 int search_string(char* char1,char* char2){
@@ -74,7 +129,7 @@ static void remove_return_line(char* arg){
     return;
 }
 
-static void command_exec(char* command_name,char* command,char* arg,char * arg2){
+static void command_exec(char* command,char** args){
     pid_t id_fils;
     int hold = 0;
     //mini_printf(arg);
@@ -85,7 +140,7 @@ static void command_exec(char* command_name,char* command,char* arg,char * arg2)
         return;
     }
     else if(id_fils==0){
-        if(execl(command_name,command,arg,arg2,NULL)==-1){
+        if(execv(command,args)==-1){
             mini_perror("Error exec");
         }
         return;
@@ -100,8 +155,11 @@ static void command_exec(char* command_name,char* command,char* arg,char * arg2)
 
 int main(int argc, char *argv[])
 {
+    char* command = mini_calloc(sizeof(char),MAX_WORD_LENGTH);
     char *buffer = mini_calloc(sizeof(char),COMMANDSIZE);
-    command = mini_calloc(sizeof(char),32);
+    char word_tab[MAX_WORD_LENGTH+1][MAX_WORD_COUNT];
+    int count;
+    
     if (!buffer)
     {
         mini_perror("Error calloc");
@@ -111,12 +169,14 @@ int main(int argc, char *argv[])
     while (fin != 1)
     {
         write(1, ">> ",3);
+        remplir_buffer_0(buffer,COMMANDSIZE);
         if (mini_scanf(buffer,COMMANDSIZE-1)<0)
         {
             fin =1;
         }
-
-        int ind = first_word(buffer);
+        clear_tab(word_tab);
+        from_sentence_to_word(buffer,word_tab,&count);
+        command = word_tab[0];
         if (search_string(command,"mini_head")==1)
         {
             mini_printf("mini_head\n");

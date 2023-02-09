@@ -6,7 +6,7 @@
 
 
 /*
-    Fonction qui renvoie le nombre maximale de charactere dans une ligne d'un fichier
+    Fonction qui renvoie le nombre maximal de charactere dans une ligne d'un fichier
 */
 static int get_max_char_line(char *filename){
     MYFILE *srcfile = mini_fopen(filename,'r');
