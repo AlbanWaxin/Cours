@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <title>ma carte de référence sur les balises HTML</title>
+        <link rel="stylesheet" href="css/07-style_refcard.css"/>
+    </head>
+    <body>
+        <a id="top"></a>
+        <h1>La structuration de données en HTML</h1>
+        <h2>La mise en forme du texte</h2>
+        nous allons découvrir ici quelles balises il <br/>
+        faut utiliser pour mettre en forme du texte dans un document HTML. 
+        <u><h3>balise &#60p&#62 </h3></u>
+        <p>
+            Ceci est mon premier paragraphe, j'utilise la balise spécialement prévue pour mettre en forme ce
+            genre de contenu et automatiquement sauter les lignes adéquates en début et en fin
+            de paragraphe.
+        </p>
+        <p>
+            Une balise pratique ! Elle se distingue de la balise br par le fait qu'elle
+            ne sert pas à aller à la ligne, mais bien à changer de paragraphe. C'est
+            sémantiquement différent.
+        </p>
+        <h3><u>balise &#60abbr&#62</u></h3>
+        <p>
+            The <abbr title="HyperText Markup Language">HTML</abbr> language is used to create web pages.
+        </p>
+        <h3><u>balise &#60dl&#62,&#60dt&#62,&#60dd&#62</u></h3>
+        <p>
+        <dl>
+            <dt>HTML</dt>
+            <dd>HyperText Markup Language</dd>
+        </dl>
+        </p>
+        <h3><u>balise &#60del&#62,&#60ins&#62</u></h3>
+        <p>
+            <del>Internet et le web, c'est pareil !</del>
+            <ins> Internet c'est le réseau, le web c'est les sites!</ins>
+        </p>
+        <h3><u>balise &#60em&#62,&#60strong&#62,&#60mark&#62</u></h3>
+        <p>
+            En <em>HTML5</em>, de nouvelles <strong>balises</strong> sont apparues, comme <mark>mark</mark> par exemple.
+            Elles ne servent qu'à définir la sémantique du contenu (mise en valeur, importance,
+            surlignage). L'apparence change par défaut, mais on pourra la modifier en CSS. 
+        </p>
+        <h3><u>balise &#60ul&#62,&#60li&#62</u></h3>
+        <p>
+            HTML
+            <ul>
+                <li>
+                    C'est bien mais HTML5 c'est mieux
+                </li>
+            </ul>
+            CSS
+            <ul>
+                <li>
+                    C’est encore mieux ! mais c'est beaucoup plus compliqué !
+                </li>
+            </ul>
+        </p>
+        <h3><u>balise &#60sub&#62,&#60sup&#62</u></h3>
+        <p>
+             c'est incroyable, H<sub>2</sub>O et M<sup>lle</sup> sont
+                correctement affichés en HTML.
+        </p>
+        <h3><u>balise &#60cite&#62</u></h3>
+        <p>
+            <cite>Parce qu'il n'y a pas
+                d'apostrophe à Polytech, la brigade de l'apostrophe sanctionne ! </cite>
+        </p>
+        <h2>La gestion des liens</h2>
+        <ul id="mylist">
+            <h3> Référence a une ancre interne:</h3>
+            <li>
+                <a href="#top" class = "onetwo">Retour au début</a> <br/>
+            </li>
+            <h3> Référence a une autre page du même projet:</h3>            
+            <li>
+                <a href= "01-hello_world.html" class="onetwo">Redécouvrez ma première page !</a>
+            </li>
+            <h3> Référence a un site avec une URL complète:</h3>
+            <li>
+                <a href=" http://validator.w3.org/" id="link3">Validator</a>
+            </li>
+            <h3> Lien accès niveau 2 fichier 03:</h3>
+            <li>
+                <a href="./niveau_2/03-test_liens.html#ancre_test" class="foursix">Lien vers une ancre dans une page d'un sous dossier</a>
+            </li>
+            <h3> Envoi d'email:</h3>
+            <li>
+                <a href="mailto:mailremunerateur3@gmail.com?Subject=yeah?text">Spammez-moi ! </a>
+            </li>
+            <h3> Téléchargement de zip:</h3>
+            <li>
+                <a href="./niveau_2/04-test_archive.zip" class="foursix">Téléchargez mon .zip ! </a>
+            </li>
+        </ul>
+        <h2>Les images</h2>
+        <img src="./images/05-logo_insa.png" title="Le logo de INSA CVL" alt="un logo de l insa" id="logo">
+        <h2>Les tableaux</h2>
+        <table id="mytable">
+            <tr><caption>L'âge de certaines personnes</caption></tr>
+            <th> Nom</th><th> Prénom </th> <th>age</th>
+            <tr> <td>Waxin</td>     <td>Alban</td>      <td>21 </td> </tr>
+            <tr> <td>Le Meur</td>    <td>Quentin</td>   <td>21 </td> </tr>
+        </table>
+        <h2>Les Formulaires</h2>
+        
+    </body>
+</html>

@@ -1,0 +1,112 @@
+@font-face {
+    font-family: "Gochi Hand";
+    src: url(../GochiHand-Regular.ttf);
+}
+
+body{
+    background-color: silver;
+    color: #000;
+    font-family: sans-serif;
+}
+
+h1{
+    text-align: center;
+    font-size: 3em;
+    font-style: italic;
+    font-family: 'Gochi Hand', sans-serif;
+}
+
+
+h2{
+    font-size: 2em;
+    color: green;
+    text-decoration: underline;
+}
+
+h2::first-letter{
+    color:white;
+    font-size: 150%;
+}
+
+p{
+    text-align: justify;
+    text-indent: 2em;
+}
+
+cite{
+    font-variant-caps:small-caps;
+    letter-spacing: 0.1em;
+    cursor:help;
+}
+
+em{
+    font-style: italic;
+    font-weight: bold;
+}
+
+defs{
+    font-weight: bold;
+}
+
+ul{
+    list-style-type:disc;
+}
+
+mark{
+    background-color: pink;
+}
+
+.onetwo{
+    color:white;
+}
+
+.foursix{
+    color:yellow;
+    font-size: 100%;
+    transition: color 0.5s ease;
+    transition: font-size 0.5s ease;
+}
+
+.foursix:active{
+    font-size: 200%;
+    color:orange;
+
+}
+
+#link3{
+    color: red;
+    text-decoration: none;
+}
+
+#link3:hover{
+    text-decoration: underline;
+}
+
+#mylist li:nth-last-of-type(2) {
+    font-size: 5px;
+}
+
+#logo{
+    max-width: 150px;
+    max-height: 100px;
+    border: 3px;
+    border-style: dotted;
+    border-color: orange;
+}
+
+#mytable{
+    text-align: right;
+    border: 1px solid black;
+    border-collapse: collapse;
+    padding: 0.5em;
+    caption-side: bottom;
+}
+
+#mytable caption {
+    font-size: 0.7em;
+    font-style: italic;
+}
+
+#mytable td,th {
+    border :1px solid black;
+}
