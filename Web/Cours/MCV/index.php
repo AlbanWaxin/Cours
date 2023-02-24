@@ -3,4 +3,5 @@
     //$_SERVER variable de type superglobal. clé:valeur
     require_once(ROOT . "app/Model.php");
     require_once(ROOT . 'app/Controller.php');
+    echo 'salut'
 ?>

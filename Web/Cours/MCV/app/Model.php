@@ -17,11 +17,7 @@ abstract class Model
         $this->_connection = null;
         try {
             //PDO = php data object
-            $this->_connection = new PDO(
-                "mysql:host=" . $this->host . " ;dbname=" . $this->dbname,
-                    $this->username,
-                    $this->password,
-            );
+            $this->_connection = new PDO("mysql:host=" . $this->host . " ;dbname=" . $this->dbname,$this->username,$this->password);
         } catch (PDOException $exception) {
             echo "Error:" . $exception->getMessage();
         }
