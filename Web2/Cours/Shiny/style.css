@@ -1,0 +1,37 @@
+html {
+    height: 100%;
+    width: 100%;
+  }
+  
+  .search-wrapper {
+    display: flex;
+    flex-direction:column
+  }
+  
+  input {
+    font-size:1rem
+  }
+  
+  .user-cards {
+    display:flex;
+    flex-wrap: wrap;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: .75rem;
+    margin-top: 2rem;
+  }
+  
+  .card {
+    border : 1px solid royalblue;
+  }
+  
+  .card > .header {
+    margin-bottom: .25rem;
+  }
+  .card > .body {
+    font-size: 1rem;
+    color: #0000ff;
+  }
+  
+  .hide {
+    display:none;
+  }

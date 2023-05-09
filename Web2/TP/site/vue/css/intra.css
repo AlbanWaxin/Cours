@@ -1,0 +1,42 @@
+h1 {
+	border-width: medium;
+	border-bottom-style: solid;
+	border-top-style:solid;
+	
+	text-align: center;
+}
+h2 {
+	border: thin ridge blue;
+	background-color: yellow;
+	font-family: Garamond;
+}
+th {
+	font-weight: bold;
+	text-decoration: underline;
+	text-align: left;
+	
+}
+
+.temperature {
+	font-style: italic;
+	color:purple;
+}
+
+.viande{
+	color:red;
+	font-weight:bold; }
+
+.legume {
+	color:green;
+	text-decoration:blink;
+	font-weight:bold;
+}
+
+ol {
+	list-style:upper-roman;
+}
+
+
+#welcome{
+	background-color: green;
+}
